@@ -12,6 +12,21 @@ public class ArrayStorage {
         tempSize = 0;
     }
 
+    void update(Resume resume) {
+        if (tempSize == 0) {
+            System.out.println("Error - the resume database is empty");
+        }
+        for (int i = 0; i < tempSize; i++) {
+            if (resume.uuid.equals(storage[i].uuid)) {
+                storage[i] = resume;
+                break;
+            } else if ((i + 1) == tempSize) {
+                System.out.println("Error - Resume uuid '" + resume.uuid
+                                    + "' not found");
+            }
+        }
+    }
+
     void save(Resume r) {
         if (tempSize == storage.length) {
             System.out.println("Error - the resume database is full");
@@ -19,15 +34,17 @@ public class ArrayStorage {
             storage[tempSize] = r;
             tempSize++;
         } else {
-            for (int i = 0; i < tempSize; i++)
+            for (int i = 0; i < tempSize; i++) {
                 if (storage[i].uuid.equals(r.uuid)) {
-                    System.out.println("Error - Resume with uuid '" + r.uuid + "' already have");
+                    System.out.println("Error - Resume with uuid '" + r.uuid
+                                        + "' already have");
                     break;
-                } else if (i + 1 == tempSize) {
+                } else if ((i + 1) == tempSize) {
                     storage[tempSize] = r;
                     tempSize++;
                     break;
                 }
+            }
         }
     }
 
@@ -37,21 +54,23 @@ public class ArrayStorage {
                 return storage[i];
             }
         }
-        System.out.println("Error - uuid '" + uuid + "' not found");
+        System.out.println("Error - Resume uuid '" + uuid + "' not found");
         return null;
     }
 
     void delete(String uuid) {
         for (int i = 0; i < tempSize; i++) {
             if (uuid.equals(storage[i].uuid)) {
-                if (tempSize - 1 - i >= 0) {
-                    System.arraycopy(storage, i + 1, storage, i, tempSize - 1 - i);
+                if ((tempSize - 1 - i) >= 0) {
+                    System.arraycopy(storage, i + 1, storage, i,
+                                    tempSize - 1 - i);
                 }
                 storage[tempSize - 1] = null;
                 tempSize--;
                 break;
-            } else if (i + 1 == tempSize) {
-                System.out.println("Error - No resume with uuid '" + uuid);
+            } else if ((i + 1) == tempSize) {
+                System.out.println("Error - Resume uuid '" + uuid
+                                    + "' not found");
             }
         }
     }
@@ -67,12 +86,5 @@ public class ArrayStorage {
 
     int size() {
         return tempSize;
-//        int counter = 0;
-//        for (Resume resCount : storage) {
-//            if (resCount != null) {
-//                counter++;
-//            }
-//        }
-//        return counter;
     }
 }
