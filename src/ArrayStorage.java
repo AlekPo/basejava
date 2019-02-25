@@ -5,8 +5,7 @@ import java.util.Arrays;
  */
 public class ArrayStorage {
     private Resume[] storage = new Resume[10_000];
-    private int tempSize; //Текущее заполнение базы резюме
-    private int checkNumber; //Позиция обнаруженного, в базе резюме, совпадения со входящим запросом
+    private int tempSize;
 
     void clear() {
         Arrays.fill(storage, 0, tempSize, null);
@@ -14,7 +13,8 @@ public class ArrayStorage {
     }
 
     void update(Resume resume) {
-        if (checkIn(resume)) {
+        int checkNumber = checkIn(resume.getUuid());
+        if (checkNumber >= 0) {
             storage[checkNumber] = resume;
         } else {
             System.out.println("Error - Resume uuid '" + resume.getUuid()
@@ -23,9 +23,10 @@ public class ArrayStorage {
     }
 
     void save(Resume resume) {
+        int checkNumber = checkIn(resume.getUuid());
         if (tempSize == storage.length) {
             System.out.println("Error - the resume database is full");
-        } else if (!checkIn(resume)) {
+        } else if (checkNumber == -1) {
             storage[tempSize] = resume;
             tempSize++;
         } else {
@@ -35,7 +36,8 @@ public class ArrayStorage {
     }
 
     Resume get(String uuid) {
-        if (checkIn(uuid)) {
+        int checkNumber = checkIn(uuid);
+        if (checkNumber >= 0) {
             return storage[checkNumber];
         } else {
             System.out.println("Error - Resume uuid '" + uuid + "' not found");
@@ -44,7 +46,8 @@ public class ArrayStorage {
     }
 
     void delete(String uuid) {
-        if (checkIn(uuid)) {
+        int checkNumber = checkIn(uuid);
+        if (checkNumber >= 0) {
             storage[checkNumber] = storage[tempSize - 1];
             storage[tempSize - 1] = null;
             tempSize--;
@@ -66,25 +69,12 @@ public class ArrayStorage {
         return tempSize;
     }
 
-    private boolean checkIn(Resume resume) {
-        for (int i = 0; i < tempSize; i++) {
-            if (resume.getUuid().equals(storage[i].getUuid())) {
-                checkNumber = i;
-                return true;
-            }
-        }
-        checkNumber = 0;
-        return false;
-    }
-
-    private boolean checkIn(String uuid) {
+    private int checkIn(String uuid) {
         for (int i = 0; i < tempSize; i++) {
             if (uuid.equals(storage[i].getUuid())) {
-                checkNumber = i;
-                return true;
+                return i;
             }
         }
-        checkNumber = 0;
-        return false;
+        return -1;
     }
 }
