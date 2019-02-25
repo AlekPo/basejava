@@ -4,8 +4,9 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
-    private int tempSize;
+    private Resume[] storage = new Resume[10_000];
+    private int tempSize; //Текущее заполнение базы резюме
+    private int checkNumber; //Позиция обнаруженного, в базе резюме, совпадения со входящим запросом
 
     void clear() {
         Arrays.fill(storage, 0, tempSize, null);
@@ -13,65 +14,42 @@ public class ArrayStorage {
     }
 
     void update(Resume resume) {
-        if (tempSize == 0) {
-            System.out.println("Error - the resume database is empty");
-        }
-        for (int i = 0; i < tempSize; i++) {
-            if (resume.uuid.equals(storage[i].uuid)) {
-                storage[i] = resume;
-                break;
-            } else if ((i + 1) == tempSize) {
-                System.out.println("Error - Resume uuid '" + resume.uuid
-                                    + "' not found");
-            }
+        if (checkIn(resume)) {
+            storage[checkNumber] = resume;
+        } else {
+            System.out.println("Error - Resume uuid '" + resume.getUuid()
+                    + "' not found");
         }
     }
 
-    void save(Resume r) {
+    void save(Resume resume) {
         if (tempSize == storage.length) {
             System.out.println("Error - the resume database is full");
-        } else if (tempSize == 0) {
-            storage[tempSize] = r;
+        } else if (!checkIn(resume)) {
+            storage[tempSize] = resume;
             tempSize++;
         } else {
-            for (int i = 0; i < tempSize; i++) {
-                if (storage[i].uuid.equals(r.uuid)) {
-                    System.out.println("Error - Resume with uuid '" + r.uuid
-                                        + "' already have");
-                    break;
-                } else if ((i + 1) == tempSize) {
-                    storage[tempSize] = r;
-                    tempSize++;
-                    break;
-                }
-            }
+            System.out.println("Error - Resume with uuid '" +
+                    resume.getUuid() + "' already have");
         }
     }
 
     Resume get(String uuid) {
-        for (int i = 0; i < tempSize; i++) {
-            if (uuid.equals(storage[i].uuid)) {
-                return storage[i];
-            }
+        if (checkIn(uuid)) {
+            return storage[checkNumber];
+        } else {
+            System.out.println("Error - Resume uuid '" + uuid + "' not found");
+            return null;
         }
-        System.out.println("Error - Resume uuid '" + uuid + "' not found");
-        return null;
     }
 
     void delete(String uuid) {
-        for (int i = 0; i < tempSize; i++) {
-            if (uuid.equals(storage[i].uuid)) {
-                if ((tempSize - 1 - i) >= 0) {
-                    System.arraycopy(storage, i + 1, storage, i,
-                                    tempSize - 1 - i);
-                }
-                storage[tempSize - 1] = null;
-                tempSize--;
-                break;
-            } else if ((i + 1) == tempSize) {
-                System.out.println("Error - Resume uuid '" + uuid
-                                    + "' not found");
-            }
+        if (checkIn(uuid)) {
+            storage[checkNumber] = storage[tempSize - 1];
+            storage[tempSize - 1] = null;
+            tempSize--;
+        } else {
+            System.out.println("Error - Resume uuid '" + uuid + "' not found");
         }
     }
 
@@ -86,5 +64,27 @@ public class ArrayStorage {
 
     int size() {
         return tempSize;
+    }
+
+    private boolean checkIn(Resume resume) {
+        for (int i = 0; i < tempSize; i++) {
+            if (resume.getUuid().equals(storage[i].getUuid())) {
+                checkNumber = i;
+                return true;
+            }
+        }
+        checkNumber = 0;
+        return false;
+    }
+
+    private boolean checkIn(String uuid) {
+        for (int i = 0; i < tempSize; i++) {
+            if (uuid.equals(storage[i].getUuid())) {
+                checkNumber = i;
+                return true;
+            }
+        }
+        checkNumber = 0;
+        return false;
     }
 }

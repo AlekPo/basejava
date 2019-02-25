@@ -13,7 +13,8 @@ public class MainArray {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Resume resume;
         while (true) {
-            System.out.print("Введите одну из команд - (list | save uuid | delete uuid | get uuid | clear | exit): ");
+            System.out.print("Введите одну из команд - (list | save uuid | " +
+                    "delete uuid | get uuid | update uuid | clear | exit): ");
             String[] params = reader.readLine().trim().toLowerCase().split(" ");
             if (params.length < 1 || params.length > 2) {
                 System.out.println("Неверная команда.");
@@ -32,7 +33,7 @@ public class MainArray {
                     break;
                 case "save":
                     resume = new Resume();
-                    resume.uuid = uuid;
+                    resume.setUuid(uuid);
                     ARRAY_STORAGE.save(resume);
                     printAll();
                     break;
@@ -43,6 +44,13 @@ public class MainArray {
                 case "get":
                     System.out.println(ARRAY_STORAGE.get(uuid));
                     break;
+                /*Добавил для проверки метода update (update uuid)*/
+                case "update":
+                    resume = new Resume();
+                    resume.setUuid(uuid);
+                    ARRAY_STORAGE.update(resume);
+                    printAll();
+                    break;
                 case "clear":
                     ARRAY_STORAGE.clear();
                     printAll();
@@ -51,13 +59,6 @@ public class MainArray {
                     return;
                 default:
                     System.out.println("Неверная команда.");
-                    break;
-                /*Добавил для проверки метода update (update uuid)*/
-                case "update":
-                    resume = new Resume();
-                    resume.uuid = uuid;
-                    ARRAY_STORAGE.update(resume);
-                    printAll();
                     break;
             }
         }
