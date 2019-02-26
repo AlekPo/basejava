@@ -7,8 +7,10 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
-public class ArrayStorage {
+public class ArrayStorage implements Storage {
+
     private static final int STORAGE_LIMIT = 10_000;
+
     private Resume[] storage = new Resume[STORAGE_LIMIT];
     private int tempSize;
 
@@ -22,7 +24,7 @@ public class ArrayStorage {
         if (index >= 0) {
             storage[index] = resume;
         } else {
-            System.out.println("Error - model.Resume uuid '" + resume.getUuid()
+            System.out.println("Error - Resume uuid '" + resume.getUuid()
                     + "' not found");
         }
     }
@@ -35,7 +37,7 @@ public class ArrayStorage {
             storage[tempSize] = resume;
             tempSize++;
         } else {
-            System.out.println("Error - model.Resume with uuid '" +
+            System.out.println("Error - Resume with uuid '" +
                     resume.getUuid() + "' already have");
         }
     }
@@ -45,7 +47,7 @@ public class ArrayStorage {
         if (index >= 0) {
             return storage[index];
         } else {
-            System.out.println("Error - model.Resume uuid '" + uuid + "' not found");
+            System.out.println("Error - Resume uuid '" + uuid + "' not found");
             return null;
         }
     }
@@ -57,7 +59,7 @@ public class ArrayStorage {
             storage[tempSize - 1] = null;
             tempSize--;
         } else {
-            System.out.println("Error - model.Resume uuid '" + uuid + "' not found");
+            System.out.println("Error - Resume uuid '" + uuid + "' not found");
         }
     }
 
@@ -68,6 +70,7 @@ public class ArrayStorage {
         Resume[] tempStorage = new Resume[tempSize];
         System.arraycopy(storage, 0, tempStorage, 0, tempSize);
         return tempStorage;
+//        return Arrays.copyOfRange(storage, 0, tempSize);
     }
 
     public int size() {
