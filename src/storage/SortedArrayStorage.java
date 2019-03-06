@@ -18,17 +18,14 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void insertObj(int index) {
-        index = (index * -1) - 1;
-        System.arraycopy(storage, index, storage, index + 1, tempSize - index);
-        tempIndex = index;
+        int insIndex = -index - 1;
+        System.arraycopy(storage, insIndex, storage, insIndex + 1, tempSize - insIndex);
+        tempIndex = insIndex; //super.tempIndex = insIndex;
     }
 
     @Override
     protected void deleteObj(int index) {
-        if (tempSize - 1 - index > 0) {
-            System.arraycopy(storage, index + 1, storage, index, tempSize - 1 - index);
-        } else {
-            storage[index] = null;
-        }
+        int rest = tempSize - 1 - index;
+        System.arraycopy(storage, index + 1, storage, index, rest);
     }
 }
