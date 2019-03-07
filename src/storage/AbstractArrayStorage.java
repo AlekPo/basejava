@@ -6,12 +6,10 @@ import java.util.Arrays;
 
 public abstract class AbstractArrayStorage implements Storage {
 
-    protected static final int STORAGE_LIMIT = 10_000;
+    protected static final int STORAGE_LIMIT = 5;//10_000;
 
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int tempSize;
-    protected int index;
-    protected int tempIndex = 0;
 
     @Override
     public int size() {
@@ -45,11 +43,11 @@ public abstract class AbstractArrayStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        index = findIndex(resume.getUuid());
+        int index = findIndex(resume.getUuid());
         if (tempSize == STORAGE_LIMIT) {
             System.out.println("Error - the resume database is full");
         } else if (index < 0) {
-            insertObj(index);
+            int tempIndex = insertObj(index);
             storage[tempIndex] = resume;
             tempSize++;
         } else {
@@ -60,7 +58,7 @@ public abstract class AbstractArrayStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        index = findIndex(uuid);
+        int index = findIndex(uuid);
         if (index >= 0) {
             deleteObj(index);
             tempSize--;
@@ -82,7 +80,7 @@ public abstract class AbstractArrayStorage implements Storage {
 
     protected abstract int findIndex(String uuid);
 
-    protected abstract void insertObj(int index);
+    protected abstract int insertObj(int index);
 
     protected abstract void deleteObj(int index);
 }

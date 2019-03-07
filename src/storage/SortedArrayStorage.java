@@ -17,10 +17,10 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertObj(int index) {
+    protected int insertObj(int index) {
         int insIndex = -index - 1;
         System.arraycopy(storage, insIndex, storage, insIndex + 1, tempSize - insIndex);
-        tempIndex = insIndex; //super.tempIndex = insIndex;
+        return insIndex;
     }
 
     @Override

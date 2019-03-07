@@ -16,8 +16,8 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertObj(int index) {
-        tempIndex = tempSize; //super.tempIndex = tempSize;
+    protected int insertObj(int index) {
+        return tempSize;
     }
 
     @Override
