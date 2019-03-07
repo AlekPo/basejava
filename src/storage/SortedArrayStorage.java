@@ -25,7 +25,10 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected void deleteObj(int index) {
-        int rest = tempSize - 1 - index;
-        System.arraycopy(storage, index + 1, storage, index, rest);
+        if (index + 1 != STORAGE_LIMIT) {
+            int rest = tempSize - 1 - index;
+            System.arraycopy(storage, index + 1, storage, index, rest);
+        }
+        storage[tempSize - 1] = null;
     }
 }
