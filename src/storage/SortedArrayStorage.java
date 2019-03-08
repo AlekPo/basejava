@@ -29,6 +29,5 @@ public class SortedArrayStorage extends AbstractArrayStorage {
             int rest = tempSize - 1 - index;
             System.arraycopy(storage, index + 1, storage, index, rest);
         }
-        storage[tempSize - 1] = null;
     }
 }

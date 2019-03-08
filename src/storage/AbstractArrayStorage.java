@@ -61,6 +61,7 @@ public abstract class AbstractArrayStorage implements Storage {
         int index = findIndex(uuid);
         if (index >= 0) {
             deleteObj(index);
+            storage[tempSize - 1] = null;
             tempSize--;
         } else {
             System.out.println("Error - Resume uuid '" + uuid + "' not found");
