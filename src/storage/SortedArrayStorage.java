@@ -11,22 +11,21 @@ public class SortedArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected int findIndex(String uuid) {
-        Resume searchKey = new Resume();
-        searchKey.setUuid(uuid);
-        return Arrays.binarySearch(storage, 0, tempSize, searchKey);
+        Resume searchKey = new Resume(uuid);
+        return Arrays.binarySearch(storage, 0, size, searchKey);
     }
 
     @Override
     protected int insertObj(int index) {
         int insIndex = -index - 1;
-        System.arraycopy(storage, insIndex, storage, insIndex + 1, tempSize - insIndex);
+        System.arraycopy(storage, insIndex, storage, insIndex + 1, size - insIndex);
         return insIndex;
     }
 
     @Override
     protected void deleteObj(int index) {
-        if (index + 1 != STORAGE_LIMIT) {
-            int rest = tempSize - 1 - index;
+        int rest = size - 1 - index;
+        if (rest > 0) {
             System.arraycopy(storage, index + 1, storage, index, rest);
         }
     }

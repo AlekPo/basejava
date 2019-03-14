@@ -7,7 +7,7 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected int findIndex(String uuid) {
-        for (int i = 0; i < tempSize; i++) {
+        for (int i = 0; i < size; i++) {
             if (uuid.equals(storage[i].getUuid())) {
                 return i;
             }
@@ -17,11 +17,11 @@ public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
     protected int insertObj(int index) {
-        return tempSize;
+        return size;
     }
 
     @Override
     protected void deleteObj(int index) {
-        storage[index] = storage[tempSize - 1];
+        storage[index] = storage[size - 1];
     }
 }
