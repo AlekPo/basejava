@@ -97,7 +97,9 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void update() {
-        storage.update(RESUME_3);
+        Resume RESUME_3_NEW = new Resume(UUID_3);
+        storage.update(RESUME_3_NEW);
+        Assert.assertEquals(RESUME_3_NEW, storage.get(UUID_3));
     }
 
     @Test(expected = NotExistStorageException.class)
