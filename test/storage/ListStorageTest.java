@@ -2,13 +2,13 @@ package storage;
 
 import exception.ExistStorageException;
 import exception.NotExistStorageException;
-import exception.StorageException;
 import model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractArrayStorageTest {
+public class ListStorageTest {
+
     private Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final Resume RESUME_1 = new Resume(UUID_1);
@@ -19,8 +19,12 @@ public abstract class AbstractArrayStorageTest {
     private static final String UUID_4 = "uuid4";
     private static final Resume RESUME_4 = new Resume(UUID_4);
 
-    protected AbstractArrayStorageTest(Storage storage) {
-        this.storage = storage;
+//    protected ListStorageTest(Storage storage) {
+//        this.storage = storage;
+//    }
+
+    public ListStorageTest() {
+        storage = new ListStorage();
     }
 
     @Before
@@ -73,18 +77,18 @@ public abstract class AbstractArrayStorageTest {
         storage.save(RESUME_3);
     }
 
-    @Test(expected = StorageException.class)
-    public void saveOverflow() {
-        storage.clear();
-        try {
-            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
-            }
-        } catch (StorageException e) {
-            Assert.fail("" + e);
-        }
-        storage.save(new Resume());
-    }
+//    @Test(expected = StorageException.class)
+//    public void saveOverflow() {
+//        storage.clear();
+//        try {
+//            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
+//                storage.save(new Resume());
+//            }
+//        } catch (StorageException e) {
+//            Assert.fail("" + e);
+//        }
+//        storage.save(new Resume());
+//    }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
@@ -117,4 +121,5 @@ public abstract class AbstractArrayStorageTest {
     private void assertGet(Resume r) {
         Assert.assertEquals(r, storage.get(r.getUuid()));
     }
+
 }
