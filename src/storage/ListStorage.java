@@ -5,7 +5,6 @@ import exception.NotExistStorageException;
 import model.Resume;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -23,14 +22,22 @@ public class ListStorage extends AbstractStorage {
         storage.clear();
     }
 
+    /**
+     * First version of the method get()
+     */
+//    @Override
+//    public Resume get(String uuid) {
+//        for (Resume res : storage) {
+//            if (res.getUuid() == uuid) {
+//                return res;
+//            }
+//        }
+//        throw new NotExistStorageException(uuid);
+//    }
     @Override
     public Resume get(String uuid) {
-        for (Resume res : storage) {
-            if (res.getUuid() == uuid) {
-                return res;
-            }
-        }
-        throw new NotExistStorageException(uuid);
+        Resume resTemp = listIter(uuid).previous();
+        return resTemp;
     }
 
     @Override
@@ -46,29 +53,57 @@ public class ListStorage extends AbstractStorage {
         storage.add(resume);
     }
 
+    /**
+     * First version of the method delete()
+     */
+//    @Override
+//    public void delete(String uuid) {
+//        ListIterator<Resume> it = storage.listIterator();
+//        while (it.hasNext()) {
+//            Resume res = it.next();
+//            if (res.getUuid() == uuid) {
+//                it.remove();
+//                return;
+//            }
+//        }
+//        throw new NotExistStorageException(uuid);
+//    }
     @Override
     public void delete(String uuid) {
-        Iterator<Resume> it = storage.iterator();
+        listIter(uuid).remove();
+    }
+
+    /**
+     * First version of the method update()
+     */
+//    @Override
+//    public void update(Resume resume) {
+//        String uuid = resume.getUuid();
+//        ListIterator<Resume> it = storage.listIterator();
+//        while (it.hasNext()) {
+//            Resume res = it.next();
+//            if (res.getUuid() == uuid) {
+//                it.set(resume);
+//                return;
+//            }
+//        }
+//        throw new NotExistStorageException(uuid);
+//    }
+    @Override
+    public void update(Resume resume) {
+        String uuid = resume.getUuid();
+        listIter(uuid).set(resume);
+    }
+
+    private ListIterator<Resume> listIter(String uuid) {
+        ListIterator<Resume> it = storage.listIterator();
         while (it.hasNext()) {
-            Resume res = it.next();
-            if (res.getUuid() == uuid) {
-                it.remove();
-                return;
+            Resume resTemp = it.next();
+            if (resTemp.getUuid() == uuid) {
+                return it;
             }
         }
         throw new NotExistStorageException(uuid);
     }
 
-    @Override
-    public void update(Resume resume) {
-        ListIterator<Resume> it = storage.listIterator();
-        while (it.hasNext()) {
-            Resume res = it.next();
-            if (res.getUuid() == resume.getUuid()) {
-                it.set(resume);
-                return;
-            }
-        }
-        throw new NotExistStorageException(resume.getUuid());
-    }
 }

@@ -19,10 +19,6 @@ public class ListStorageTest {
     private static final String UUID_4 = "uuid4";
     private static final Resume RESUME_4 = new Resume(UUID_4);
 
-//    protected ListStorageTest(Storage storage) {
-//        this.storage = storage;
-//    }
-
     public ListStorageTest() {
         storage = new ListStorage();
     }
