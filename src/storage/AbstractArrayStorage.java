@@ -1,8 +1,5 @@
 package storage;
 
-import exception.ExistStorageException;
-import exception.NotExistStorageException;
-import exception.StorageException;
 import model.Resume;
 
 import java.util.Arrays;
@@ -25,16 +22,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    @Override
-    public Resume get(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            return storage[index];
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
-    }
-
     /**
      * @return array, contains only Resumes in storage (without null)
      */
@@ -44,44 +31,44 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume resume) {
-        int index = findIndex(resume.getUuid());
-        if (size == STORAGE_LIMIT) {
-            throw new StorageException("Storage overflow", resume.getUuid());
-        } else if (index < 0) {
-            int tempIndex = insertObj(index);
-            storage[tempIndex] = resume;
-            size++;
-        } else {
-            throw new ExistStorageException(resume.getUuid());
-        }
+    protected abstract int getIndex(String uuid);
+
+    @Override
+    protected boolean checkIn(int index, String uuid) {
+        return index >= 0;
     }
 
     @Override
-    public void delete(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            deleteObj(index);
-            storage[size - 1] = null;
-            size--;
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
+    protected Resume doGet(int index, String uuid) {
+        return storage[index];
     }
 
     @Override
-    public void update(Resume resume) {
-        int index = findIndex(resume.getUuid());
-        if (index >= 0) {
-            storage[index] = resume;
-        } else {
-            throw new NotExistStorageException(resume.getUuid());
-        }
+    protected boolean checkStorageOverflow() {
+        return size == STORAGE_LIMIT;
     }
 
-    protected abstract int findIndex(String uuid);
+    @Override
+    protected void insertObj(Resume resume, int index) {
+        int tempIndex = insertIndex(index);
+        storage[tempIndex] = resume;
+        size++;
+    }
 
-    protected abstract int insertObj(int index);
+    @Override
+    protected void deleteObj(int index, String uuid) {
+        deleteIndex(index);
+        storage[size - 1] = null;
+        size--;
+    }
 
-    protected abstract void deleteObj(int index);
+    @Override
+    protected void updateObj(int index, Resume resume) {
+        storage[index] = resume;
+    }
+
+    protected abstract int insertIndex(int index);
+
+    protected abstract void deleteIndex(int index);
+
 }

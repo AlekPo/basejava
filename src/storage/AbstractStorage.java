@@ -1,5 +1,8 @@
 package storage;
 
+import exception.ExistStorageException;
+import exception.NotExistStorageException;
+import exception.StorageException;
 import model.Resume;
 
 public abstract class AbstractStorage implements Storage {
@@ -11,12 +14,15 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void clear() {
-
     }
 
     @Override
     public Resume get(String uuid) {
-        return null;
+        int index = getIndex(uuid); // getIndex - частная реализация list/array
+        if (!(checkIn(index, uuid))) { // if ( ! *проверка index* ) проверка index - частная реализация list/array
+            throw new NotExistStorageException(uuid);
+        }
+        return doGet(index, uuid); // doGet - частная реализация  list/array
     }
 
     @Override
@@ -26,16 +32,50 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-
+        String uuid = resume.getUuid();
+        int index = getIndex(uuid);
+        if (checkStorageOverflow()) {
+            throw new StorageException("Storage overflow", uuid);
+        } else if (!(checkIn(index, uuid))) {
+            insertObj(resume, index);
+        } else {
+            throw new ExistStorageException(uuid);
+        }
     }
 
     @Override
     public void delete(String uuid) {
-
+        int index = getIndex(uuid);
+        if (checkIn(index, uuid)) {
+            deleteObj(index, uuid);
+        } else {
+            throw new NotExistStorageException(uuid);
+        }
     }
 
     @Override
     public void update(Resume resume) {
-
+        String uuid = resume.getUuid();
+        int index = getIndex(uuid);
+        if (checkIn(index, uuid)) {
+            updateObj(index, resume);
+        } else {
+            throw new NotExistStorageException(uuid);
+        }
     }
+
+    protected abstract int getIndex(String uuid);
+
+    protected abstract boolean checkIn(int index, String uuid);
+
+    protected abstract Resume doGet(int index, String uuid);
+
+    protected abstract boolean checkStorageOverflow();
+
+    protected abstract void insertObj(Resume resume, int index);
+
+    protected abstract void deleteObj(int index, String uuid);
+
+    protected abstract void updateObj(int index, Resume resume);
+
 }

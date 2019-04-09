@@ -6,7 +6,7 @@ package storage;
 public class ArrayStorage extends AbstractArrayStorage {
 
     @Override
-    protected int findIndex(String uuid) {
+    protected int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (uuid.equals(storage[i].getUuid())) {
                 return i;
@@ -16,12 +16,12 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected int insertObj(int index) {
+    protected int insertIndex(int index) {
         return size;
     }
 
     @Override
-    protected void deleteObj(int index) {
+    protected void deleteIndex(int index) {
         storage[index] = storage[size - 1];
     }
 }
