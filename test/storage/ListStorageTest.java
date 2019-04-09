@@ -57,7 +57,6 @@ public class ListStorageTest {
     @Test
     public void getAll() {
         Assert.assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
-//        Assert.assertEquals(3, storage.size());
         assertSize(3);
     }
 
@@ -73,18 +72,18 @@ public class ListStorageTest {
         storage.save(RESUME_3);
     }
 
-//    @Test(expected = StorageException.class)
-//    public void saveOverflow() {
-//        storage.clear();
-//        try {
-//            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-//                storage.save(new Resume());
-//            }
-//        } catch (StorageException e) {
-//            Assert.fail("" + e);
-//        }
-//        storage.save(new Resume());
-//    }
+/*    @Test(expected = StorageException.class)
+    public void saveOverflow() {
+        storage.clear();
+        try {
+            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
+                storage.save(new Resume());
+            }
+        } catch (StorageException e) {
+            Assert.fail("" + e);
+        }
+        storage.save(new Resume());
+    }*/
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {

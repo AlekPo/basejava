@@ -18,11 +18,11 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        int index = getIndex(uuid); // getIndex - частная реализация list/array
-        if (!(checkIn(index, uuid))) { // if ( ! *проверка index* ) проверка index - частная реализация list/array
+        int index = getIndex(uuid);
+        if (!(checkIn(index, uuid))) {
             throw new NotExistStorageException(uuid);
         }
-        return doGet(index, uuid); // doGet - частная реализация  list/array
+        return doGet(index, uuid);
     }
 
     @Override
