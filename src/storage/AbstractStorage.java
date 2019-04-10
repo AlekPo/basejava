@@ -2,27 +2,17 @@ package storage;
 
 import exception.ExistStorageException;
 import exception.NotExistStorageException;
-import exception.StorageException;
 import model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
     @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
-    public void clear() {
-    }
-
-    @Override
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (!(checkIn(index, uuid))) {
+        Object searchKey = getSearchKey(uuid);
+        if (!checkIn(searchKey)) {
             throw new NotExistStorageException(uuid);
         }
-        return doGet(index, uuid);
+        return doGet(searchKey);
     }
 
     @Override
@@ -33,11 +23,9 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public void save(Resume resume) {
         String uuid = resume.getUuid();
-        int index = getIndex(uuid);
-        if (checkStorageOverflow()) {
-            throw new StorageException("Storage overflow", uuid);
-        } else if (!(checkIn(index, uuid))) {
-            insertObj(resume, index);
+        Object searchKey = getSearchKey(uuid);
+        if (!checkIn(searchKey)) {
+            insertObj(searchKey, resume);
         } else {
             throw new ExistStorageException(uuid);
         }
@@ -45,9 +33,9 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (checkIn(index, uuid)) {
-            deleteObj(index, uuid);
+        Object searchKey = getSearchKey(uuid);
+        if (checkIn(searchKey)) {
+            deleteObj(searchKey);
         } else {
             throw new NotExistStorageException(uuid);
         }
@@ -56,26 +44,23 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public void update(Resume resume) {
         String uuid = resume.getUuid();
-        int index = getIndex(uuid);
-        if (checkIn(index, uuid)) {
-            updateObj(index, resume);
+        Object searchKey = getSearchKey(uuid);
+        if (checkIn(searchKey)) {
+            updateObj(searchKey, resume);
         } else {
             throw new NotExistStorageException(uuid);
         }
     }
 
-    protected abstract int getIndex(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
-    protected abstract boolean checkIn(int index, String uuid);
+    protected abstract boolean checkIn(Object searchKey);
 
-    protected abstract Resume doGet(int index, String uuid);
+    protected abstract Resume doGet(Object searchKey);
 
-    protected abstract boolean checkStorageOverflow();
+    protected abstract void insertObj(Object searchKey, Resume resume);
 
-    protected abstract void insertObj(Resume resume, int index);
+    protected abstract void deleteObj(Object searchKey);
 
-    protected abstract void deleteObj(int index, String uuid);
-
-    protected abstract void updateObj(int index, Resume resume);
-
+    protected abstract void updateObj(Object searchKey, Resume resume);
 }

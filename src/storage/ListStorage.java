@@ -25,7 +25,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected int getIndex(String uuid) {
+    protected Object getSearchKey(String uuid) {
         Resume resTemp;
         for (int i = 0; i < storage.size(); i++) {
             resTemp = storage.get(i);
@@ -37,32 +37,27 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean checkIn(int index, String uuid) {
-        return index >= 0;
+    protected boolean checkIn(Object searchKey) {
+        return (int) searchKey >= 0;
     }
 
     @Override
-    protected Resume doGet(int index, String uuid) {
-        return storage.get(index);
+    protected Resume doGet(Object searchKey) {
+        return storage.get((int) searchKey);
     }
 
     @Override
-    protected boolean checkStorageOverflow() {
-        return false;
-    }
-
-    @Override
-    protected void insertObj(Resume resume, int index) {
+    protected void insertObj(Object searchKey, Resume resume) {
         storage.add(resume);
     }
 
     @Override
-    protected void deleteObj(int index, String uuid) {
-        storage.remove(index);
+    protected void deleteObj(Object searchKey) {
+        storage.remove((int) searchKey);
     }
 
     @Override
-    protected void updateObj(int index, Resume resume) {
-        storage.set(index, resume);
+    protected void updateObj(Object searchKey, Resume resume) {
+        storage.set((int) searchKey, resume);
     }
 }

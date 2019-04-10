@@ -25,39 +25,37 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected int getIndex(String uuid) {
-        return -1;
+    protected Object getSearchKey(String uuid) {
+        return uuid;
     }
 
     @Override
-    protected boolean checkIn(int index, String uuid) {
+    protected boolean checkIn(Object searchKey) {
+        String uuid = (String) searchKey;
         return storage.containsKey(uuid);
     }
 
     @Override
-    protected Resume doGet(int index, String uuid) {
+    protected Resume doGet(Object searchKey) {
+        String uuid = (String) searchKey;
         return storage.get(uuid);
     }
 
     @Override
-    protected boolean checkStorageOverflow() {
-        return false;
-    }
-
-    @Override
-    protected void insertObj(Resume resume, int index) {
+    protected void insertObj(Object searchKey, Resume resume) {
         String uuid = resume.getUuid();
         storage.put(uuid, resume);
     }
 
     @Override
-    protected void deleteObj(int index, String uuid) {
+    protected void deleteObj(Object searchKey) {
+        String uuid = (String) searchKey;
         storage.remove(uuid);
     }
 
     @Override
-    protected void updateObj(int index, Resume resume) {
-        String uuid = resume.getUuid();
+    protected void updateObj(Object searchKey, Resume resume) {
+        String uuid = (String) searchKey;
         storage.put(uuid, resume);
     }
 }

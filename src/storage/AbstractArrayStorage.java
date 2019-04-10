@@ -1,5 +1,6 @@
 package storage;
 
+import exception.StorageException;
 import model.Resume;
 
 import java.util.Arrays;
@@ -31,44 +32,43 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected abstract int getIndex(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
     @Override
-    protected boolean checkIn(int index, String uuid) {
-        return index >= 0;
+    protected boolean checkIn(Object searchKey) {
+        return (int) searchKey >= 0;
     }
 
     @Override
-    protected Resume doGet(int index, String uuid) {
-        return storage[index];
+    protected Resume doGet(Object searchKey) {
+        return storage[(int) searchKey];
     }
 
     @Override
-    protected boolean checkStorageOverflow() {
-        return size == STORAGE_LIMIT;
+    protected void insertObj(Object searchKey, Resume resume) {
+        if (size == STORAGE_LIMIT) {
+            String uuid = resume.getUuid();
+            throw new StorageException("Storage overflow", uuid);
+        } else {
+            int tempIndex = insertIndex((int) searchKey);
+            storage[tempIndex] = resume;
+            size++;
+        }
     }
 
     @Override
-    protected void insertObj(Resume resume, int index) {
-        int tempIndex = insertIndex(index);
-        storage[tempIndex] = resume;
-        size++;
-    }
-
-    @Override
-    protected void deleteObj(int index, String uuid) {
-        deleteIndex(index);
+    protected void deleteObj(Object searchKey) {
+        deleteIndex((int) searchKey);
         storage[size - 1] = null;
         size--;
     }
 
     @Override
-    protected void updateObj(int index, Resume resume) {
-        storage[index] = resume;
+    protected void updateObj(Object searchKey, Resume resume) {
+        storage[(int) searchKey] = resume;
     }
 
     protected abstract int insertIndex(int index);
 
     protected abstract void deleteIndex(int index);
-
 }
