@@ -1,22 +1,14 @@
 package storage;
 
-import org.junit.Ignore;
+import exception.ExistStorageException;
+import exception.NotExistStorageException;
+import model.Resume;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-public class ListStorageTest extends AbstractStorageTest {
-    public ListStorageTest() {
-        super(new ListStorage());
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void saveOverflow() {
-
-    }
-
-}/*
-    private Storage storage;
+public abstract class AbstractStorageTest {
+    protected Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final Resume RESUME_1 = new Resume(UUID_1);
     private static final String UUID_2 = "uuid2";
@@ -26,9 +18,12 @@ public class ListStorageTest extends AbstractStorageTest {
     private static final String UUID_4 = "uuid4";
     private static final Resume RESUME_4 = new Resume(UUID_4);
 
-    public ListStorageTest() {
-        storage = new ListStorage();
+    protected AbstractStorageTest(Storage storage) {
+        this.storage = storage;
     }
+
+//    protected AbstractStorageTest() {
+//    }
 
     @Before
     public void setUp() {
@@ -64,6 +59,7 @@ public class ListStorageTest extends AbstractStorageTest {
     @Test
     public void getAll() {
         Assert.assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
+//        Assert.assertEquals(3, map.size());
         assertSize(3);
     }
 
@@ -79,20 +75,9 @@ public class ListStorageTest extends AbstractStorageTest {
         storage.save(RESUME_3);
     }
 
-*/
-/*    @Test(expected = StorageException.class)
-    public void saveOverflow() {
-        map.clear();
-        try {
-            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                map.save(new Resume());
-            }
-        } catch (StorageException e) {
-            Assert.fail("" + e);
-        }
-        map.save(new Resume());
-    }*//*
-
+//    @Test(expected = StorageException.class)
+    @Test
+    public abstract void saveOverflow();
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
@@ -125,4 +110,4 @@ public class ListStorageTest extends AbstractStorageTest {
     private void assertGet(Resume r) {
         Assert.assertEquals(r, storage.get(r.getUuid()));
     }
-*/
+}

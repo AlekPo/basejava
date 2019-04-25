@@ -3,7 +3,7 @@ import storage.SortedArrayStorage;
 import storage.Storage;
 
 /**
- * Test for your storage.ArrayStorage implementation
+ * Test for your map.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
     private static final Storage ARRAY_STORAGE = new SortedArrayStorage();

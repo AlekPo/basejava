@@ -7,21 +7,21 @@ import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
 
-    Map<String, Resume> storage = new HashMap<>();
+    protected Map<String, Resume> map = new HashMap<>();
 
     @Override
     public int size() {
-        return storage.size();
+        return map.size();
     }
 
     @Override
     public void clear() {
-        storage.clear();
+        map.clear();
     }
 
     @Override
     public Resume[] getAll() {
-        return storage.values().toArray(new Resume[0]);
+        return map.values().toArray(new Resume[0]);
     }
 
     @Override
@@ -30,32 +30,32 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean checkIn(Object searchKey) {
+    protected boolean isExist(Object searchKey) {
         String uuid = (String) searchKey;
-        return storage.containsKey(uuid);
+        return map.containsKey(uuid);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
         String uuid = (String) searchKey;
-        return storage.get(uuid);
+        return map.get(uuid);
     }
 
     @Override
-    protected void insertObj(Object searchKey, Resume resume) {
+    protected void doSave(Object searchKey, Resume resume) {
         String uuid = resume.getUuid();
-        storage.put(uuid, resume);
+        map.put(uuid, resume);
     }
 
     @Override
-    protected void deleteObj(Object searchKey) {
+    protected void doDelete(Object searchKey) {
         String uuid = (String) searchKey;
-        storage.remove(uuid);
+        map.remove(uuid);
     }
 
     @Override
-    protected void updateObj(Object searchKey, Resume resume) {
+    protected void doUpdate(Object searchKey, Resume resume) {
         String uuid = (String) searchKey;
-        storage.put(uuid, resume);
+        map.put(uuid, resume);
     }
 }

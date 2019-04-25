@@ -24,51 +24,51 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     /**
-     * @return array, contains only Resumes in storage (without null)
+     * @return array, contains only Resumes in map (without null)
      */
     @Override
     public Resume[] getAll() {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
-    @Override
-    protected abstract Object getSearchKey(String uuid);
 
     @Override
-    protected boolean checkIn(Object searchKey) {
-        return (int) searchKey >= 0;
+    protected boolean isExist(Object index) {
+        return (Integer) index >= 0;
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return storage[(int) searchKey];
+    protected Resume doGet(Object index) {
+        return storage[(Integer) index];
     }
 
     @Override
-    protected void insertObj(Object searchKey, Resume resume) {
+    protected void doSave(Object index, Resume resume) {
         if (size == STORAGE_LIMIT) {
             String uuid = resume.getUuid();
             throw new StorageException("Storage overflow", uuid);
         } else {
-            int tempIndex = insertIndex((int) searchKey);
-            storage[tempIndex] = resume;
+            insertElement(resume, (Integer) index);
             size++;
         }
     }
 
     @Override
-    protected void deleteObj(Object searchKey) {
-        deleteIndex((int) searchKey);
+    protected void doDelete(Object index) {
+        fillDeletedElement((Integer) index);
         storage[size - 1] = null;
         size--;
     }
 
     @Override
-    protected void updateObj(Object searchKey, Resume resume) {
-        storage[(int) searchKey] = resume;
+    protected void doUpdate(Object index, Resume resume) {
+        storage[(Integer) index] = resume;
     }
 
-    protected abstract int insertIndex(int index);
+    @Override
+    protected abstract Integer getSearchKey(String uuid);
 
-    protected abstract void deleteIndex(int index);
+    protected abstract void insertElement(Resume resume, int index);
+
+    protected abstract void fillDeletedElement(int index);
 }

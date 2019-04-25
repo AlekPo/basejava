@@ -7,28 +7,28 @@ import java.util.List;
 
 public class ListStorage extends AbstractStorage {
 
-    List<Resume> storage = new ArrayList<>();
+    protected List<Resume> list = new ArrayList<>();
 
     @Override
     public int size() {
-        return storage.size();
+        return list.size();
     }
 
     @Override
     public void clear() {
-        storage.clear();
+        list.clear();
     }
 
     @Override
     public Resume[] getAll() {
-        return storage.toArray(new Resume[0]);
+        return list.toArray(new Resume[0]);
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
+    protected Integer getSearchKey(String uuid) {
         Resume resTemp;
-        for (int i = 0; i < storage.size(); i++) {
-            resTemp = storage.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            resTemp = list.get(i);
             if (resTemp.getUuid().equals(uuid)) {
                 return i;
             }
@@ -37,27 +37,27 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean checkIn(Object searchKey) {
-        return (int) searchKey >= 0;
+    protected boolean isExist(Object searchKey) {
+        return (Integer) searchKey >= 0;
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return storage.get((int) searchKey);
+        return list.get((Integer) searchKey);
     }
 
     @Override
-    protected void insertObj(Object searchKey, Resume resume) {
-        storage.add(resume);
+    protected void doSave(Object searchKey, Resume resume) {
+        list.add(resume);
     }
 
     @Override
-    protected void deleteObj(Object searchKey) {
-        storage.remove((int) searchKey);
+    protected void doDelete(Object searchKey) {
+        list.remove(((Integer) searchKey).intValue());
     }
 
     @Override
-    protected void updateObj(Object searchKey, Resume resume) {
-        storage.set((int) searchKey, resume);
+    protected void doUpdate(Object searchKey, Resume resume) {
+        list.set((Integer) searchKey, resume);
     }
 }
