@@ -24,6 +24,13 @@ public class ListStorage extends AbstractStorage {
         return list.toArray(new Resume[0]);
     }
 
+//    @Override
+//    public List<Resume> getAllSorted() {
+//        return list.stream().
+//                sorted(Comparator.comparing(Resume::getFullName)).
+//                collect(Collectors.toList());
+//    }
+
     @Override
     protected Integer getSearchKey(String uuid) {
         Resume resTemp;
@@ -59,5 +66,10 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected void doUpdate(Object searchKey, Resume resume) {
         list.set((Integer) searchKey, resume);
+    }
+
+    @Override
+    protected List<Resume> getList() {
+        return list;
     }
 }

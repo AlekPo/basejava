@@ -7,16 +7,25 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class AbstractStorageTest {
     protected Storage storage;
     private static final String UUID_1 = "uuid1";
-    private static final Resume RESUME_1 = new Resume(UUID_1);
+    private static final String Full_name_1 = "Иванов Шон";
+    private static final Resume RESUME_1 = new Resume(UUID_1, Full_name_1);
     private static final String UUID_2 = "uuid2";
-    private static final Resume RESUME_2 = new Resume(UUID_2);
+    private static final String Full_name_2 = "Александров Сергей";
+    private static final Resume RESUME_2 = new Resume(UUID_2, Full_name_2);
     private static final String UUID_3 = "uuid3";
-    private static final Resume RESUME_3 = new Resume(UUID_3);
+    private static final String Full_name_3 = "Петров Александр";
+    private static final Resume RESUME_3 = new Resume(UUID_3, Full_name_3);
     private static final String UUID_4 = "uuid4";
-    private static final Resume RESUME_4 = new Resume(UUID_4);
+    private static final String Full_name_4 = "Ватников Александр";
+    private static final Resume RESUME_4 = new Resume(UUID_4, Full_name_4);
+
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -64,6 +73,16 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
+    public void getAllSorted() {
+        List<Resume> list = new ArrayList<>(Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
+        System.out.println(storage.getAllSorted());
+//        Assert.assertArrayEquals(new ArrayList<>(Arrays.asList(RESUME_1, RESUME_2, RESUME_3)), storage.getAllSorted());
+//        Assert.assertEquals(3, map.size());
+        assertSize(3);
+
+    }
+
+    @Test
     public void save() {
         storage.save(RESUME_4);
         assertSize(4);
@@ -75,7 +94,7 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_3);
     }
 
-//    @Test(expected = StorageException.class)
+    //    @Test(expected = StorageException.class)
     @Test
     public abstract void saveOverflow();
 
