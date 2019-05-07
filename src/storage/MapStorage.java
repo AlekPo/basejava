@@ -22,19 +22,6 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return map.values().toArray(new Resume[0]);
-    }
-
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        List<Resume> list = new ArrayList<>(map.values());
-//         return list.stream().
-//                sorted(Comparator.comparing(Resume::getFullName)).
-//                collect(Collectors.toList());
-//    }
-
-    @Override
     protected Object getSearchKey(String uuid) {
         return uuid;
     }

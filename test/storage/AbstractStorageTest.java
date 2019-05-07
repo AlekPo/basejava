@@ -65,21 +65,20 @@ public abstract class AbstractStorageTest {
         storage.get("dummy");
     }
 
-    @Test
-    public void getAll() {
-        Assert.assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
-//        Assert.assertEquals(3, map.size());
-        assertSize(3);
-    }
+//    @Test
+//    public void getAll() {
+//        Assert.assertArrayEquals(new Resume[]{RESUME_1, RESUME_2, RESUME_3}, storage.getAll());
+////        Assert.assertEquals(3, map.size());
+//        assertSize(3);
+//    }
 
     @Test
     public void getAllSorted() {
-        List<Resume> list = new ArrayList<>(Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
-        System.out.println(storage.getAllSorted());
-//        Assert.assertArrayEquals(new ArrayList<>(Arrays.asList(RESUME_1, RESUME_2, RESUME_3)), storage.getAllSorted());
-//        Assert.assertEquals(3, map.size());
+        List<Resume> list = storage.getAllSorted();
+//        System.out.println(storage.getAllSorted());
         assertSize(3);
-
+        Assert.assertEquals(3, list.size());
+        Assert.assertEquals(list, (new ArrayList<>(Arrays.asList(RESUME_2, RESUME_1, RESUME_3))));
     }
 
     @Test

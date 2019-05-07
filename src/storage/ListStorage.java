@@ -20,18 +20,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return list.toArray(new Resume[0]);
-    }
-
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        return list.stream().
-//                sorted(Comparator.comparing(Resume::getFullName)).
-//                collect(Collectors.toList());
-//    }
-
-    @Override
     protected Integer getSearchKey(String uuid) {
         Resume resTemp;
         for (int i = 0; i < list.size(); i++) {

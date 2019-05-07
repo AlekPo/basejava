@@ -25,23 +25,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    /**
-     * @return array, contains only Resumes in map (without null)
-     */
-    @Override
-    public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
-    }
-
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        List<Resume> listStorage = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(storage, 0, size)));
-//        return listStorage.stream().
-//                sorted(Comparator.comparing(Resume::getFullName)).
-//                collect(Collectors.toList());
-//    }
-
-
     @Override
     protected boolean isExist(Object index) {
         return (Integer) index >= 0;

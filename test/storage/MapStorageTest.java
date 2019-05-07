@@ -8,12 +8,12 @@ public class MapStorageTest extends AbstractStorageTest {
         super(new MapStorage());
     }
 
-    @Override
-    @Ignore
-    @Test
-    public void getAll() {
-
-    }
+//    @Override
+//    @Ignore
+//    @Test
+//    public void getAllSorted() {
+//
+//    }
 
     @Override
     @Ignore

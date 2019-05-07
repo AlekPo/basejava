@@ -17,11 +17,6 @@ public abstract class AbstractStorage implements Storage {
     }
 
     @Override
-    public Resume[] getAll() {
-        return new Resume[0];
-    }
-
-    @Override
     public List<Resume> getAllSorted() {
         return getList().stream().
                 sorted(Comparator.comparing(Resume::getFullName)).

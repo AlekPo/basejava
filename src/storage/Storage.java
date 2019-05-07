@@ -12,8 +12,6 @@ public interface Storage {
 
     Resume get(String uuid);
 
-    Resume[] getAll();
-
     List<Resume> getAllSorted();
 
     void save(Resume resume);
