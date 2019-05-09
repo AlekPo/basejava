@@ -4,7 +4,6 @@ import exception.ExistStorageException;
 import exception.NotExistStorageException;
 import model.Resume;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,38 +11,36 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        Object searchKey = getExistedSearchKey(uuid);
+        Object searchKey = getExistSearchKey(uuid);
         return doGet(searchKey);
     }
 
     @Override
     public List<Resume> getAllSorted() {
         return getList().stream().
-                sorted(Comparator.comparing(Resume::getFullName)).
+                sorted().
                 collect(Collectors.toList());
     }
 
     @Override
     public void save(Resume resume) {
-        String uuid = resume.getUuid();
-        Object searchKey = getNotExistedSearchKey(uuid);
+        Object searchKey = getNotExistSearchKey(resume.getUuid());
         doSave(searchKey, resume);
     }
 
     @Override
     public void delete(String uuid) {
-        Object searchKey = getExistedSearchKey(uuid);
+        Object searchKey = getExistSearchKey(uuid);
         doDelete(searchKey);
     }
 
     @Override
     public void update(Resume resume) {
-        String uuid = resume.getUuid();
-        Object searchKey = getExistedSearchKey(uuid);
+        Object searchKey = getExistSearchKey(resume.getUuid());
         doUpdate(searchKey, resume);
     }
 
-    private Object getExistedSearchKey(String uuid) {
+    private Object getExistSearchKey(String uuid) {
         Object searchKey = getSearchKey(uuid);
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
@@ -51,7 +48,7 @@ public abstract class AbstractStorage implements Storage {
         return searchKey;
     }
 
-    private Object getNotExistedSearchKey(String uuid) {
+    private Object getNotExistSearchKey(String uuid) {
         Object searchKey = getSearchKey(uuid);
         if (isExist(searchKey)) {
             throw new ExistStorageException(uuid);

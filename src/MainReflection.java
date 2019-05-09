@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 public class MainReflection {
     public static void main(String[] args) throws Exception {
-        Resume r = new Resume();
+        Resume r = new Resume("Name");
         Field field = r.getClass().getDeclaredFields()[0];
         System.out.println(field.getName());
         field.setAccessible(true);
@@ -15,7 +15,8 @@ public class MainReflection {
 
         // TODO : invoke r.toString via reflection
         Method method = Resume.class.getDeclaredMethod("toString");
-        System.out.println("Invoke r.toString via reflection: " + method.invoke(r));
+        System.out.println("Invoke r.toString via reflection: "
+                + method.invoke(r));
 
         System.out.println(r);
     }
