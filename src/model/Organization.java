@@ -1,18 +1,23 @@
 package model;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+
 public class Organization {
     private String name;
     private String nameHttp;
-    private String date;
-    private String level;
-    private String function;
+    private YearMonth dateStart;
+    private YearMonth dateEnd;
+    private String title;
+    private String description;
 
-    public Organization(String name, String nameHttp, String date, String level, String function) {
+    public Organization(String name, String nameHttp, YearMonth dateStart, YearMonth dateEnd, String title, String description) {
         this.name = name;
         this.nameHttp = nameHttp;
-        this.date = date;
-        this.level = level;
-        this.function = function;
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.title = title;
+        this.description = description;
     }
 
     public String getName() {
@@ -31,28 +36,36 @@ public class Organization {
         this.nameHttp = nameHttp;
     }
 
-    public String getDate() {
-        return date;
+    public YearMonth getDateStart() {
+        return dateStart;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDateStart(YearMonth dateStart) {
+        this.dateStart = dateStart;
     }
 
-    public String getLevel() {
-        return level;
+    public YearMonth getDateEnd() {
+        return dateEnd;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public void setDateEnd(YearMonth dateEnd) {
+        this.dateEnd = dateEnd;
     }
 
-    public String getFunction() {
-        return function;
+    public String getTitle() {
+        return title;
     }
 
-    public void setFunction(String function) {
-        this.function = function;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -64,18 +77,20 @@ public class Organization {
 
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (nameHttp != null ? !nameHttp.equals(that.nameHttp) : that.nameHttp != null) return false;
-        if (date != null ? !date.equals(that.date) : that.date != null) return false;
-        if (level != null ? !level.equals(that.level) : that.level != null) return false;
-        return function != null ? function.equals(that.function) : that.function == null;
+        if (dateStart != null ? !dateStart.equals(that.dateStart) : that.dateStart != null) return false;
+        if (dateEnd != null ? !dateEnd.equals(that.dateEnd) : that.dateEnd != null) return false;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        return description != null ? description.equals(that.description) : that.description == null;
     }
 
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
         result = 31 * result + (nameHttp != null ? nameHttp.hashCode() : 0);
-        result = 31 * result + (date != null ? date.hashCode() : 0);
-        result = 31 * result + (level != null ? level.hashCode() : 0);
-        result = 31 * result + (function != null ? function.hashCode() : 0);
+        result = 31 * result + (dateStart != null ? dateStart.hashCode() : 0);
+        result = 31 * result + (dateEnd != null ? dateEnd.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
         return result;
     }
 
@@ -84,7 +99,7 @@ public class Organization {
         String str;
         str = name + "\n   ";
         str += nameHttp.isEmpty() ? "" : nameHttp + "\n   ";
-        str += date + "   " + level + "\n   " + function;
+        str += dateStart.format(DateTimeFormatter.ofPattern("MM/yyyy")) + " - " + dateEnd.format(DateTimeFormatter.ofPattern("MM/yyyy")) + "   " + title + "\n   " + description;
         return str;
     }
 }

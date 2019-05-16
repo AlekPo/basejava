@@ -1,11 +1,12 @@
 package model;
 
-public class TextSection extends Section {
+public class TextSection extends AbstractSection {
+
+    private String value;
+
     public TextSection(String value) {
         this.value = value;
     }
-
-    private String value;
 
     public String getValue() {
         return value;

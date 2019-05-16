@@ -1,14 +1,15 @@
 package model;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrganizationSection extends Section {
+public class OrganizationSection extends AbstractSection {
 
     private List<Organization> list = new ArrayList<>();
 
-    public void addValue(String name, String nameHttp, String date, String level, String function) {
-        list.add(new Organization(name, nameHttp, date, level, function));
+    public void addValue(String name, String nameHttp, YearMonth dateStart, YearMonth dateEnd, String level, String function) {
+        list.add(new Organization(name, nameHttp, dateStart, dateEnd, level, function));
     }
 
     public List<Organization> getList() {
