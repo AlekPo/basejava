@@ -99,7 +99,8 @@ public class Organization {
         String str;
         str = name + "\n   ";
         str += nameHttp.isEmpty() ? "" : nameHttp + "\n   ";
-        str += dateStart.format(DateTimeFormatter.ofPattern("MM/yyyy")) + " - " + dateEnd.format(DateTimeFormatter.ofPattern("MM/yyyy")) + "   " + title + "\n   " + description;
+        str += dateStart.format(DateTimeFormatter.ofPattern("MM/yyyy")) + " - " + dateEnd.format(DateTimeFormatter.ofPattern("MM/yyyy")) + "   ";
+        str += description.isEmpty() ? title + "\n" : title + "\n" + "   " + description + "\n";
         return str;
     }
 }

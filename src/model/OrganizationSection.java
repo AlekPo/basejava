@@ -1,15 +1,13 @@
 package model;
 
-import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrganizationSection extends AbstractSection {
 
-    private List<Organization> list = new ArrayList<>();
+    private List<Organization> list;
 
-    public void addValue(String name, String nameHttp, YearMonth dateStart, YearMonth dateEnd, String level, String function) {
-        list.add(new Organization(name, nameHttp, dateStart, dateEnd, level, function));
+    public OrganizationSection(List<Organization> list) {
+        this.list = list;
     }
 
     public List<Organization> getList() {
@@ -40,7 +38,7 @@ public class OrganizationSection extends AbstractSection {
 
         StringBuilder output = new StringBuilder();
         for (Organization content : list) {
-            output.append(" * ").append(content).append("\n\n");
+            output.append(" * ").append(content).append("\n");
         }
         return output.toString();
     }

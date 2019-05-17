@@ -1,13 +1,13 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ListSection extends AbstractSection {
-    private List<String> contents = new ArrayList<>();
 
-    public void addValue(String value) {
-        contents.add(value);
+    private List<String> contents;
+
+    public ListSection(List<String> contents) {
+        this.contents = contents;
     }
 
     public List<String> getContents() {
