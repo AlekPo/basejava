@@ -1,21 +1,19 @@
 package model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ListSection extends AbstractSection {
 
-    private List<String> contents;
+    private final List<String> items;
 
-    public ListSection(List<String> contents) {
-        this.contents = contents;
+    public ListSection(List<String> items) {
+        Objects.requireNonNull(items, "items must not be null");
+        this.items = items;
     }
 
-    public List<String> getContents() {
-        return contents;
-    }
-
-    public void setContents(List<String> contents) {
-        this.contents = contents;
+    public List<String> getItems() {
+        return items;
     }
 
     @Override
@@ -25,18 +23,18 @@ public class ListSection extends AbstractSection {
 
         ListSection that = (ListSection) o;
 
-        return contents != null ? contents.equals(that.contents) : that.contents == null;
+        return items.equals(that.items);
     }
 
     @Override
     public int hashCode() {
-        return contents != null ? contents.hashCode() : 0;
+        return items.hashCode();
     }
 
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
-        for (String content : contents) {
+        for (String content : items) {
             output.append(" * ").append(content).append("\n\n");
         }
         return output.toString();

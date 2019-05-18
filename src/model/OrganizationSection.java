@@ -1,21 +1,19 @@
 package model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
 
-    private List<Organization> list;
+    private final List<Organization> organizations;
 
-    public OrganizationSection(List<Organization> list) {
-        this.list = list;
+    public OrganizationSection(List<Organization> organizations) {
+        Objects.requireNonNull(organizations, "organizations must not be null");
+        this.organizations = organizations;
     }
 
-    public List<Organization> getList() {
-        return list;
-    }
-
-    public void setList(List<Organization> list) {
-        this.list = list;
+    public List<Organization> getOrganizations() {
+        return organizations;
     }
 
     @Override
@@ -25,19 +23,19 @@ public class OrganizationSection extends AbstractSection {
 
         OrganizationSection that = (OrganizationSection) o;
 
-        return list != null ? list.equals(that.list) : that.list == null;
+        return organizations.equals(that.organizations);
     }
 
     @Override
     public int hashCode() {
-        return list != null ? list.hashCode() : 0;
+        return organizations.hashCode();
     }
 
     @Override
     public String toString() {
 
         StringBuilder output = new StringBuilder();
-        for (Organization content : list) {
+        for (Organization content : organizations) {
             output.append(" * ").append(content).append("\n");
         }
         return output.toString();

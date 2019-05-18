@@ -1,19 +1,18 @@
 package model;
 
+import java.util.Objects;
+
 public class TextSection extends AbstractSection {
 
-    private String value;
+    private final String content;
 
-    public TextSection(String value) {
-        this.value = value;
+    public TextSection(String content) {
+        Objects.requireNonNull(content, "content must not be null");
+        this.content = content;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public String getContent() {
+        return content;
     }
 
     @Override
@@ -23,16 +22,16 @@ public class TextSection extends AbstractSection {
 
         TextSection that = (TextSection) o;
 
-        return value != null ? value.equals(that.value) : that.value == null;
+        return content.equals(that.content);
     }
 
     @Override
     public int hashCode() {
-        return value != null ? value.hashCode() : 0;
+        return content.hashCode();
     }
 
     @Override
     public String toString() {
-        return value;
+        return content;
     }
 }
