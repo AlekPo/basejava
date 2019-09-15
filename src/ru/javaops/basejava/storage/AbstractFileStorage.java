@@ -68,7 +68,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected List<Resume> doCopyAll() {
         List<Resume> resumes = new ArrayList<>();
         File[] files = directory.listFiles();
-        for (File file : files) {
+        for (File file : Objects.requireNonNull(files)) {
             resumes.add(doGet(file));
         }
         return resumes;
@@ -76,16 +76,13 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        int i = 0;
-        for (File file : directory.listFiles()) {
-            i++;
-        }
-        return i;
+        int length = Objects.requireNonNull(directory.list()).length;
+        return length;
     }
 
     @Override
     public void clear() {
-        for (File file : directory.listFiles()) {
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
             doDelete(file);
         }
     }

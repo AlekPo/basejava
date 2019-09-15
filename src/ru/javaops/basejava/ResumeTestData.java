@@ -14,10 +14,10 @@ import static ru.javaops.basejava.model.SectionType.*;
 public class ResumeTestData {
 
     public static void main(String[] args) {
-        setResume("uuid", "Григорий Кислин");
+        createResume("uuid", "Григорий Кислин");
     }
 
-    public static Resume setResume(String uuid, String fullName) {
+    public static Resume createResume(String uuid, String fullName) {
         Resume resumeTest = new Resume(uuid, fullName);
         initContact(resumeTest);
         initSection(resumeTest);

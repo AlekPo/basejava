@@ -37,19 +37,34 @@ public class MainFile {
         listDir(projectRoot);
     }
 
+//  Рекурсия каталогов, выводит полный путь к каталогам и файлам
+//    private static void listDir(String filePath) {
+//        Objects.requireNonNull(filePath, "Path must not be null");
+//        File dir = new File(filePath);
+//        try {
+//            System.out.println(dir.getCanonicalPath());
+//        } catch (IOException e) {
+//            throw new RuntimeException("Error", e);
+//        }
+//        if (dir.isDirectory()) {
+//            String[] list = dir.list();
+//            for (String name : list) {
+//                listDir(filePath + "\\" + name);
+//            }
+//        }
+//    }
+
     private static void listDir(String filePath) {
         Objects.requireNonNull(filePath, "Path must not be null");
         File dir = new File(filePath);
-        try {
-            System.out.println(dir.getCanonicalPath());
-        } catch (IOException e) {
-            throw new RuntimeException("Error", e);
-        }
+
         if (dir.isDirectory()) {
             String[] list = dir.list();
-            for (String name : list) {
+            for (String name : Objects.requireNonNull(list)) {
                 listDir(filePath + "\\" + name);
             }
+        } else {
+            System.out.println(dir.getName());
         }
     }
 }
