@@ -3,8 +3,7 @@ package ru.javaops.basejava.storage;
 import ru.javaops.basejava.exception.StorageException;
 import ru.javaops.basejava.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,17 +34,21 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume doGet(File file) {
-        return doRead(file);
+        try {
+            return doRead(new BufferedInputStream(new FileInputStream(file)));
+        } catch (IOException e) {
+            throw new StorageException("File read error", file.getName(), e);
+        }
     }
 
     @Override
     protected void doSave(File file, Resume resume) {
         try {
             file.createNewFile();
-            doWrite(file, resume);
         } catch (IOException e) {
             throw new StorageException("Error creating file, directory: " + file.getAbsolutePath(), file.getName(), e);
         }
+        doUpdate(file, resume);
     }
 
     @Override
@@ -58,7 +61,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(File file, Resume resume) {
         try {
-            doWrite(file, resume);
+            doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
         } catch (IOException e) {
             throw new StorageException("File write error, directory: " + file.getAbsolutePath(), file.getName(), e);
         }
@@ -86,7 +89,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
     }
 
-    protected abstract void doWrite(File file, Resume resume) throws IOException;
+    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
 
-    protected abstract Resume doRead(File file);
+    protected abstract Resume doRead(InputStream is);
 }
