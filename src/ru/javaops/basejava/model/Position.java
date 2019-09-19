@@ -1,10 +1,12 @@
 package ru.javaops.basejava.model;
 
+import java.io.Serializable;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public class Position {
+public class Position implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final YearMonth dateStart;
     private final YearMonth dateEnd;
     private final String title;
