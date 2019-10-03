@@ -3,6 +3,8 @@ package ru.javaops.basejava.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Objects;
 
 public class MainFile {
@@ -32,9 +34,19 @@ public class MainFile {
         }
 
         //HW 8
-        System.out.println("The contents of the './src' directory and its subdirectories");
+        System.out.println();
+        System.out.println("HW 8 - The contents of the './src' directory and its subdirectories");
         String projectRoot = "./src";
         listDir(projectRoot);
+
+        //HW 9
+        System.out.println();
+        System.out.println("HW 9 - The contents of the './src' directory and its subdirectories");
+        try {
+            Files.walkFileTree(Paths.get(projectRoot), new MyFileVisitor());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 //  Рекурсия каталогов, выводит полный путь к каталогам и файлам
@@ -67,4 +79,21 @@ public class MainFile {
             System.out.println(dir.getName());
         }
     }
+
+    public static class MyFileVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult visitFile(Path path,
+                                         BasicFileAttributes fileAttributes) {
+            System.out.println("\t" + path.getFileName().toString());
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path path,
+                                                 BasicFileAttributes fileAttributes) {
+            System.out.println(path.toString());
+            return FileVisitResult.CONTINUE;
+        }
+    }
+
 }
