@@ -25,7 +25,6 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     protected Path getSearchKey(String uuid) {
-//        directory.resolve(uuid);
         return Paths.get(directory.toString(), File.separator, uuid);
     }
 
@@ -62,27 +61,6 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         }
     }
 
-//    @Override
-//    protected void doUpdate(Path path, Resume resume) {
-//        BufferedOutputStream bos = null;
-//        try {
-//            bos = new BufferedOutputStream(new FileOutputStream(path.toFile()));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            Files.copy(Files.createFile(path), bos);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            doWrite(bos, resume);
-//        } catch (IOException e) {
-//            throw new StorageException("Path write error, directory: " + path.getParent().toString(), resume.getUuid(), e);
-//        }
-//    }
-
     @Override
     protected void doUpdate(Path path, Resume resume) {
         try {
@@ -91,7 +69,6 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
             throw new StorageException("Path write error, directory: " + path.getParent().toString(), resume.getUuid(), e);
         }
     }
-
 
     @Override
     protected List<Resume> doCopyAll() {
