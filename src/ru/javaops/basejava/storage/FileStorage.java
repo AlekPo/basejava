@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private File directory;
+    private StrategyObjectIOStream strategy;
 
-    protected AbstractFileStorage(File directory) {
+    protected FileStorage(StrategyObjectIOStream strategy, String dir) {
+        this.strategy = strategy;
+        directory = new File(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
@@ -19,7 +22,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         if (!directory.canRead() || !directory.canWrite()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not readable/writable");
         }
-        this.directory = directory;
     }
 
     @Override
@@ -89,7 +91,15 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
     }
 
-    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
+//    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
+//
+//    protected abstract Resume doRead(InputStream is) throws IOException;
 
-    protected abstract Resume doRead(InputStream is) throws IOException;
+    protected void doWrite(OutputStream os, Resume resume) throws IOException {
+        strategy.doWrite(os, resume);
+    }
+
+    protected Resume doRead(InputStream is) throws IOException {
+        return strategy.doRead(is);
+    }
 }

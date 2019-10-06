@@ -12,10 +12,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
+    private StrategyObjectIOStream strategy;
 
-    protected AbstractPathStorage(String dir) {
+    protected PathStorage(StrategyObjectIOStream strategy, String dir) {
+        this.strategy = strategy;
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
@@ -99,8 +101,16 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         }
     }
 
-    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
+//    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
+//
+//    protected abstract Resume doRead(InputStream is) throws IOException;
 
-    protected abstract Resume doRead(InputStream is) throws IOException;
+    protected void doWrite(OutputStream os, Resume resume) throws IOException {
+        strategy.doWrite(os, resume);
+    }
+
+    protected Resume doRead(InputStream is) throws IOException {
+        return strategy.doRead(is);
+    }
 }
 
