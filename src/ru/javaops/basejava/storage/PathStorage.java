@@ -3,7 +3,10 @@ package ru.javaops.basejava.storage;
 import ru.javaops.basejava.exception.StorageException;
 import ru.javaops.basejava.model.Resume;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,14 +17,17 @@ import java.util.stream.Collectors;
 
 public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
-    private StrategyObjectIOStream strategy;
+    private IOStrategy strategy;
 
-    protected PathStorage(StrategyObjectIOStream strategy, String dir) {
+    protected PathStorage(IOStrategy strategy, String dir) {
         this.strategy = strategy;
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
+        if (Files.notExists(directory)) {
+            throw new IllegalArgumentException("Path '" + directory.toAbsolutePath().toString() + "' does not exist");
+        }
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
-            throw new IllegalArgumentException(dir + "is not directory or is not writable");
+            throw new IllegalArgumentException("'" + dir + "' in path '" + directory.toAbsolutePath().toString() + " is not directory or is not writable");
         }
     }
 
@@ -38,7 +44,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return doRead(new BufferedInputStream(Files.newInputStream(path)));
+            return strategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Path read error", path.getFileName().toString(), e);
         }
@@ -66,7 +72,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected void doUpdate(Path path, Resume resume) {
         try {
-            doWrite(new BufferedOutputStream(Files.newOutputStream(path)), resume);
+            strategy.doWrite(new BufferedOutputStream(Files.newOutputStream(path)), resume);
         } catch (IOException e) {
             throw new StorageException("Path write error, directory: " + path.getParent().toString(), resume.getUuid(), e);
         }
@@ -99,18 +105,6 @@ public class PathStorage extends AbstractStorage<Path> {
         } catch (IOException e) {
             throw new StorageException("Path delete error", null, e);
         }
-    }
-
-//    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
-//
-//    protected abstract Resume doRead(InputStream is) throws IOException;
-
-    protected void doWrite(OutputStream os, Resume resume) throws IOException {
-        strategy.doWrite(os, resume);
-    }
-
-    protected Resume doRead(InputStream is) throws IOException {
-        return strategy.doRead(is);
     }
 }
 

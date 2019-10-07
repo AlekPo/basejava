@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
-    protected static final String STORAGE_DIR = "C:\\TopJava\\basejava\\storage";
+    protected static final String STORAGE_DIR = "storage";
     protected Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");

@@ -5,7 +5,7 @@ import ru.javaops.basejava.model.Resume;
 
 import java.io.*;
 
-public class StrategyObjectIOStream implements SerializationStrategy {
+public class IOStrategy implements SerializationStrategy {
 
     @Override
     public void doWrite(OutputStream os, Resume resume) throws IOException {
