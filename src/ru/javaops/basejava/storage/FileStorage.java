@@ -2,6 +2,7 @@ package ru.javaops.basejava.storage;
 
 import ru.javaops.basejava.exception.StorageException;
 import ru.javaops.basejava.model.Resume;
+import ru.javaops.basejava.storage.serializer.IOStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class FileStorage extends AbstractStorage<File> {
     protected FileStorage(IOStrategy strategy, String dir) {
         this.strategy = strategy;
         directory = new File(dir);
+
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.exists()) {
             throw new IllegalArgumentException("Path '" + directory.getAbsolutePath() + "' does not exist");
@@ -84,7 +86,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        return Objects.requireNonNull(directory.list()).length;
+        return Objects.requireNonNull(directory.list(), "Directory read error").length;
     }
 
     @Override
