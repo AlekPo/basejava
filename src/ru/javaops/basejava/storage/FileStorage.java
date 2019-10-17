@@ -2,7 +2,7 @@ package ru.javaops.basejava.storage;
 
 import ru.javaops.basejava.exception.StorageException;
 import ru.javaops.basejava.model.Resume;
-import ru.javaops.basejava.storage.serializer.IOStrategy;
+import ru.javaops.basejava.storage.serializer.SerializationStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,9 +11,9 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
     private File directory;
-    private IOStrategy strategy;
+    private SerializationStrategy strategy;
 
-    protected FileStorage(IOStrategy strategy, String dir) {
+    protected FileStorage(SerializationStrategy strategy, String dir) {
         this.strategy = strategy;
         directory = new File(dir);
 

@@ -1,16 +1,24 @@
 package ru.javaops.basejava.model;
 
+import ru.javaops.basejava.util.YearMonthAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Position implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final YearMonth dateStart;
-    private final YearMonth dateEnd;
-    private final String title;
-    private final String description;
+    @XmlJavaTypeAdapter(YearMonthAdapter.class)
+    private YearMonth dateStart;
+    @XmlJavaTypeAdapter(YearMonthAdapter.class)
+    private YearMonth dateEnd;
+    private String title;
+    private String description;
 
     public Position(YearMonth dateStart, YearMonth dateEnd, String title, String description) {
         Objects.requireNonNull(dateStart, "dateStart must not be null");
@@ -20,6 +28,9 @@ public class Position implements Serializable {
         this.dateEnd = dateEnd;
         this.title = title;
         this.description = description;
+    }
+
+    public Position() {
     }
 
     public YearMonth getDateStart() {

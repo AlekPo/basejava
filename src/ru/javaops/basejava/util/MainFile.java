@@ -18,8 +18,12 @@ public class MainFile {
             throw new RuntimeException("Error", e);
         }
 
-        File dir = new File("./src/model");
-        System.out.println(dir.isDirectory());
+        File dir = new File("./src/ru/javaops/basejava/model");
+        try {
+            System.out.println(dir.getCanonicalPath() + " directory? " + dir.isDirectory());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String[] list = dir.list();
         if (list != null) {
             for (String name : list) {
@@ -28,7 +32,7 @@ public class MainFile {
         }
 
         try (FileInputStream fis = new FileInputStream(filePath)) {
-            System.out.println(fis.read());
+            System.out.println("read: " + fis.read());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,6 +51,13 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        //HW 9 - mentor
+        System.out.println();
+        System.out.println("HW 9 (mentor) - The contents of the './src' directory and its subdirectories");
+        File dirProject = new File(projectRoot);
+        printDirectoryDeeply(dirProject, "");
+
     }
 
 //  Рекурсия каталогов, выводит полный путь к каталогам и файлам
@@ -77,6 +88,21 @@ public class MainFile {
             }
         } else {
             System.out.println(dir.getName());
+        }
+    }
+
+    public static void printDirectoryDeeply(File dir, String offset) {
+        File[] files = dir.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    System.out.println(offset + "F: " + file.getName());
+                } else if (file.isDirectory()) {
+                    System.out.println(offset + "D: " + file.getName());
+                    printDirectoryDeeply(file, offset + "  ");
+                }
+            }
         }
     }
 

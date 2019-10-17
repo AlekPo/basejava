@@ -1,13 +1,16 @@
 package ru.javaops.basejava.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Link homePage;
+    private Link homePage;
 
     private List<Position> positions = new ArrayList<>();
 
@@ -18,6 +21,13 @@ public class Organization implements Serializable {
     public Organization(Link homePage, List<Position> positions) {
         this.homePage = homePage;
         this.positions = positions;
+    }
+
+    public Organization() {
+    }
+
+    public List<Position> getPositions() {
+        return positions;
     }
 
     public Link getHomePage() {
@@ -70,4 +80,5 @@ public class Organization implements Serializable {
         }
         return output.toString();
     }
+
 }

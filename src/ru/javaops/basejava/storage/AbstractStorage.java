@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractStorage<SK> implements Storage {
 
-    //    protected final Logger LOG = Logger.getLogger(getClass().getName());
     private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
     @Override

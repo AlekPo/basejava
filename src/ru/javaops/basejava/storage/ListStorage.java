@@ -9,6 +9,9 @@ public class ListStorage extends AbstractStorage<Integer> {
 
     protected List<Resume> list = new ArrayList<>();
 
+    public ListStorage() {
+    }
+
     @Override
     public int size() {
         return list.size();

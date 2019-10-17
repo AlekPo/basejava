@@ -1,6 +1,7 @@
 package ru.javaops.basejava.exception;
 
 public class StorageException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
     private final String uuid;
 
     public StorageException(String message, String uuid) {
@@ -11,6 +12,14 @@ public class StorageException extends RuntimeException {
     public StorageException(String message, String uuid, Exception e) {
         super(message, e);
         this.uuid = uuid;
+    }
+
+    public StorageException(String message, Exception e) {
+        this(message, null, e);
+    }
+
+    public StorageException(String message) {
+        this(message, null, null);
     }
 
     public String getUuid() {

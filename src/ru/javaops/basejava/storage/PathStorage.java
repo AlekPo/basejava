@@ -2,6 +2,7 @@ package ru.javaops.basejava.storage;
 
 import ru.javaops.basejava.exception.StorageException;
 import ru.javaops.basejava.model.Resume;
+import ru.javaops.basejava.storage.serializer.SerializationStrategy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -13,15 +14,17 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
-    private IOStrategy strategy;
+    private SerializationStrategy strategy;
 
-    protected PathStorage(IOStrategy strategy, String dir) {
+    protected PathStorage(SerializationStrategy strategy, String dir) {
         this.strategy = strategy;
         directory = Paths.get(dir);
+
         Objects.requireNonNull(directory, "directory must not be null");
         if (Files.notExists(directory)) {
             throw new IllegalArgumentException("Path '" + directory.toAbsolutePath().toString() + "' does not exist");
@@ -46,7 +49,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             return strategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Path read error", path.getFileName().toString(), e);
+            throw new StorageException("Path read error", getFileName(path), e);
         }
     }
 
@@ -65,7 +68,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("Path deletion error, directory: " + path.getParent().toString(), path.getFileName().toString(), e);
+            throw new StorageException("Path deletion error, directory: " + path.getParent().toString(), getFileName(path), e);
         }
     }
 
@@ -81,29 +84,30 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected List<Resume> doCopyAll() {
         List<Resume> resumes;
-        try {
-            resumes = Files.list(directory).map(this::doGet).collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new StorageException("Copy all paths error, directory: " + directory.toString(), null, e);
-        }
+        resumes = getFilesList().map(this::doGet).collect(Collectors.toList());
         return resumes;
     }
 
     @Override
     public int size() {
-        try {
-            return (int) Files.list(directory).count();
-        } catch (IOException e) {
-            throw new StorageException("Size path error, directory: " + directory.toString(), null, e);
-        }
+        return (int) getFilesList().count();
     }
 
     @Override
     public void clear() {
+        getFilesList().forEach(this::doDelete);
+    }
+
+
+    private String getFileName(Path path) {
+        return path.getFileName().toString();
+    }
+
+    private Stream<Path> getFilesList() {
         try {
-            Files.list(directory).forEach(this::doDelete);
+            return Files.list(directory);
         } catch (IOException e) {
-            throw new StorageException("Path delete error", null, e);
+            throw new StorageException("Directory read error" + directory.toString(), e);
         }
     }
 }
