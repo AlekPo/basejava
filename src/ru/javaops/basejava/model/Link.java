@@ -51,7 +51,7 @@ public class Link implements Serializable {
     public String toString() {
         String str;
         str = name + "\n   ";
-        str += url.isEmpty() ? "" : url + "\n   ";
+        str += Objects.isNull(url) ? "" : url + "\n   ";
         return str;
     }
 }

@@ -76,7 +76,7 @@ public class Position implements Serializable {
     public String toString() {
         String str;
         str = dateStart.format(DateTimeFormatter.ofPattern("MM/yyyy")) + " - " + dateEnd.format(DateTimeFormatter.ofPattern("MM/yyyy")) + "   ";
-        str += description.isEmpty() ? title + "\n" : title + "\n" + "   " + description + "\n";
+        str += Objects.isNull(description) ? title + "\n" : title + "\n" + "   " + description + "\n";
         return str;
     }
 }

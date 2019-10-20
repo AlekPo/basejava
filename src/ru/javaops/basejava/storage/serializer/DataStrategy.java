@@ -1,5 +1,6 @@
 package ru.javaops.basejava.storage.serializer;
 
+import ru.javaops.basejava.exception.StorageException;
 import ru.javaops.basejava.model.*;
 
 import java.io.*;
@@ -7,8 +8,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static ru.javaops.basejava.model.SectionType.*;
+import java.util.Objects;
 
 public class DataStrategy implements SerializationStrategy {
 
@@ -20,24 +20,33 @@ public class DataStrategy implements SerializationStrategy {
             //contacts
             int sizeContacts = resume.getContacts().size();
             dos.write(sizeContacts);
-            if (!(sizeContacts == 0)) {
-                for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-                    dos.writeUTF(entry.getKey().name());
-                    dos.writeUTF(entry.getValue());
+            for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+                dos.writeUTF(entry.getKey().name());
+                dos.writeUTF(entry.getValue());
+            }
+            //sections
+            int sizeSections = resume.getSections().size();
+            dos.write(sizeSections);
+            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+                SectionType section = entry.getKey();
+                dos.writeUTF(section.name());
+                switch (section) {
+                    case OBJECTIVE:
+                    case PERSONAL:
+                        saveTextSection(resume, section, dos);
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        saveStringSection(resume, section, dos);
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        saveOrganizationSection(resume, section, dos);
+                        break;
+                    default:
+                        throw new StorageException("Call an indescribable section from SectionType");
                 }
             }
-            //OBJECTIVE
-            saveTextSection(resume, OBJECTIVE, dos);
-            //PERSONAL
-            saveTextSection(resume, PERSONAL, dos);
-            //ACHIEVEMENT
-            saveStringSection(resume, ACHIEVEMENT, dos);
-            //QUALIFICATIONS
-            saveStringSection(resume, QUALIFICATIONS, dos);
-            //EXPERIENCE
-            saveOrganizationSection(resume, EXPERIENCE, dos);
-            //EDUCATION
-            saveOrganizationSection(resume, EDUCATION, dos);
         }
     }
 
@@ -50,18 +59,27 @@ public class DataStrategy implements SerializationStrategy {
             for (int i = 0; i < sizeContacts; i++) {
                 resume.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-            //OBJECTIVE
-            readTextSection(resume, OBJECTIVE, dis);
-            //PERSONAL
-            readTextSection(resume, PERSONAL, dis);
-            //ACHIEVEMENT
-            readStringSection(resume, ACHIEVEMENT, dis);
-            //QUALIFICATIONS
-            readStringSection(resume, QUALIFICATIONS, dis);
-            //EXPERIENCE
-            readOrganizationSection(resume, EXPERIENCE, dis);
-            //EDUCATION
-            readOrganizationSection(resume, EDUCATION, dis);
+            //sections
+            int sizeSections = dis.read();
+            for (int i = 0; i < sizeSections; i++) {
+                String sectionName = dis.readUTF();
+                switch (sectionName) {
+                    case "OBJECTIVE":
+                    case "PERSONAL":
+                        readTextSection(resume, SectionType.valueOf(sectionName), dis);
+                        break;
+                    case "ACHIEVEMENT":
+                    case "QUALIFICATIONS":
+                        readStringSection(resume, SectionType.valueOf(sectionName), dis);
+                        break;
+                    case "EXPERIENCE":
+                    case "EDUCATION":
+                        readOrganizationSection(resume, SectionType.valueOf(sectionName), dis);
+                        break;
+                    default:
+                        throw new StorageException("Call an indescribable section from SectionType");
+                }
+            }
             return resume;
         }
     }
@@ -69,7 +87,8 @@ public class DataStrategy implements SerializationStrategy {
     private void saveTextSection(Resume resume, SectionType sectionType, DataOutputStream dos) throws IOException {
         if (!(resume.getSection(sectionType) == null)) {
             dos.write(1);
-            dos.writeUTF(resume.getSection(sectionType).toString());
+            String string = ((TextSection) resume.getSection(sectionType)).getContent();
+            dos.writeUTF(string);
         } else {
             dos.write(0);
         }
@@ -81,10 +100,8 @@ public class DataStrategy implements SerializationStrategy {
             List<String> strings = ((ListSection) resume.getSection(sectionType)).getItems();
             size = strings.size();
             dos.write(size);
-            if (!(size == 0)) {
-                for (String string : strings) {
-                    dos.writeUTF(string);
-                }
+            for (String string : strings) {
+                dos.writeUTF(string);
             }
         } else {
             size = 0;
@@ -98,25 +115,25 @@ public class DataStrategy implements SerializationStrategy {
             dos.write(organizations.size());
             for (Organization organization : organizations) {
                 dos.writeUTF(organization.getHomePage().getName());
-                dos.writeUTF(organization.getHomePage().getUrl());
+                dos.writeUTF(Objects.nonNull(organization.getHomePage().getUrl()) ? organization.getHomePage().getUrl() : "null");
                 List<Position> positions = organization.getPositions();
                 dos.write(positions.size());
                 for (Position position : positions) {
-                    int yearStart = position.getDateStart().getYear();
-                    dos.writeUTF(String.valueOf(yearStart));
-                    int monthStart = position.getDateStart().getMonthValue();
-                    dos.writeUTF(String.valueOf(monthStart));
-                    int yearEnd = position.getDateEnd().getYear();
-                    dos.writeUTF(String.valueOf(yearEnd));
-                    int monthEnd = position.getDateEnd().getMonthValue();
-                    dos.writeUTF(String.valueOf(monthEnd));
+                    saveDate(position.getDateStart().getYear(), dos);
+                    saveDate(position.getDateStart().getMonthValue(), dos);
+                    saveDate(position.getDateEnd().getYear(), dos);
+                    saveDate(position.getDateEnd().getMonthValue(), dos);
                     dos.writeUTF(position.getTitle());
-                    dos.writeUTF(position.getDescription());
+                    dos.writeUTF(Objects.nonNull(position.getDescription()) ? position.getDescription() : "null");
                 }
             }
         } else {
             dos.write(0);
         }
+    }
+
+    private void saveDate(int date, DataOutputStream dos) throws IOException {
+        dos.writeUTF(String.valueOf(date));
     }
 
     private void readTextSection(Resume resume, SectionType sectionType, DataInputStream dis) throws IOException {
@@ -147,17 +164,22 @@ public class DataStrategy implements SerializationStrategy {
                 int sizePositions = dis.read();
                 List<Position> positions = new ArrayList<>();
                 for (int j = 0; j < sizePositions; j++) {
-                    int yearStart = Integer.parseInt(dis.readUTF());
-                    int monthStart = Integer.parseInt(dis.readUTF());
-                    int yearEnd = Integer.parseInt(dis.readUTF());
-                    int monthEnd = Integer.parseInt(dis.readUTF());
+                    int yearStart = readDate(dis);
+                    int monthStart = readDate(dis);
+                    int yearEnd = readDate(dis);
+                    int monthEnd = readDate(dis);
                     String title = dis.readUTF();
                     String description = dis.readUTF();
-                    positions.add(new Position(YearMonth.of(yearStart, monthStart), YearMonth.of(yearEnd, monthEnd), title, description));
+                    positions.add(new Position(YearMonth.of(yearStart, monthStart), YearMonth.of(yearEnd, monthEnd), title
+                            , (description.equals("null") ? null : description)));
                 }
-                organizations.add(new Organization(new Link(nameLink, httpLink), positions));
+                organizations.add(new Organization(new Link(nameLink, (httpLink.equals("null") ? null : httpLink)), positions));
             }
             resume.setSection(sectionType, new OrganizationSection(organizations));
         }
+    }
+
+    private int readDate(DataInputStream dis) throws IOException {
+        return Integer.parseInt(dis.readUTF());
     }
 }
