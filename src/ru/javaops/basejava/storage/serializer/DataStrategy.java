@@ -85,50 +85,58 @@ public class DataStrategy implements SerializationStrategy {
     }
 
     private void saveTextSection(Resume resume, SectionType sectionType, DataOutputStream dos) throws IOException {
-        if (!(resume.getSection(sectionType) == null)) {
-            dos.write(1);
-            String string = ((TextSection) resume.getSection(sectionType)).getContent();
-            dos.writeUTF(string);
-        } else {
-            dos.write(0);
-        }
+        String string = ((TextSection) resume.getSection(sectionType)).getContent();
+        dos.writeUTF(string);
     }
 
     private void saveStringSection(Resume resume, SectionType sectionType, DataOutputStream dos) throws IOException {
         int size;
-        if (!(resume.getSection(sectionType) == null)) {
-            List<String> strings = ((ListSection) resume.getSection(sectionType)).getItems();
-            size = strings.size();
-            dos.write(size);
-            for (String string : strings) {
-                dos.writeUTF(string);
-            }
-        } else {
-            size = 0;
-            dos.write(size);
+        List<String> strings = ((ListSection) resume.getSection(sectionType)).getItems();
+        size = strings.size();
+        dos.write(size);
+        for (String string : strings) {
+            dos.writeUTF(string);
         }
     }
 
     private void saveOrganizationSection(Resume resume, SectionType sectionType, DataOutputStream dos) throws IOException {
-        if (!(resume.getSection(sectionType) == null)) {
-            List<Organization> organizations = ((OrganizationSection) resume.getSection(sectionType)).getOrganizations();
-            dos.write(organizations.size());
-            for (Organization organization : organizations) {
-                dos.writeUTF(organization.getHomePage().getName());
-                dos.writeUTF(Objects.nonNull(organization.getHomePage().getUrl()) ? organization.getHomePage().getUrl() : "null");
-                List<Position> positions = organization.getPositions();
-                dos.write(positions.size());
-                for (Position position : positions) {
-                    saveDate(position.getDateStart().getYear(), dos);
-                    saveDate(position.getDateStart().getMonthValue(), dos);
-                    saveDate(position.getDateEnd().getYear(), dos);
-                    saveDate(position.getDateEnd().getMonthValue(), dos);
-                    dos.writeUTF(position.getTitle());
-                    dos.writeUTF(Objects.nonNull(position.getDescription()) ? position.getDescription() : "null");
-                }
+        List<Organization> organizations = ((OrganizationSection) resume.getSection(sectionType)).getOrganizations();
+        dos.write(organizations.size());
+        for (Organization organization : organizations) {
+            dos.writeUTF(organization.getHomePage().getName());
+//          Решение для NULL объекта и пустой строки ""
+//            if (Objects.isNull(organization.getHomePage().getUrl())) {
+//                dos.writeUTF("null");
+//            } else if (organization.getHomePage().getUrl().isEmpty()) {
+//                dos.writeUTF("");
+//            } else {
+//                dos.writeUTF(organization.getHomePage().getUrl());
+//            }
+//          Решение для NULL объекта
+            dos.writeUTF(Objects.isNull(organization.getHomePage().getUrl()) ?
+                    "" : organization.getHomePage().getUrl());
+//
+            List<Position> positions = organization.getPositions();
+            dos.write(positions.size());
+            for (Position position : positions) {
+                saveDate(position.getDateStart().getYear(), dos);
+                saveDate(position.getDateStart().getMonthValue(), dos);
+                saveDate(position.getDateEnd().getYear(), dos);
+                saveDate(position.getDateEnd().getMonthValue(), dos);
+                dos.writeUTF(position.getTitle());
+//              Решение для NULL объекта и пустой строки ""
+//                if (Objects.isNull(position.getDescription())) {
+//                    dos.writeUTF("null");
+//                } else if (position.getDescription().isEmpty()) {
+//                    dos.writeUTF("");
+//                } else {
+//                    dos.writeUTF(position.getDescription());
+//                }
+//              Решение для NULL объекта
+                dos.writeUTF(Objects.isNull(position.getDescription()) ?
+                        "" : position.getDescription());
+//
             }
-        } else {
-            dos.write(0);
         }
     }
 
@@ -137,46 +145,48 @@ public class DataStrategy implements SerializationStrategy {
     }
 
     private void readTextSection(Resume resume, SectionType sectionType, DataInputStream dis) throws IOException {
-        int size = dis.read();
-        if (!(size == 0)) {
-            resume.setSection(sectionType, new TextSection(dis.readUTF()));
-        }
+        resume.setSection(sectionType, new TextSection(dis.readUTF()));
     }
 
     private void readStringSection(Resume resume, SectionType sectionType, DataInputStream dis) throws IOException {
         int size = dis.read();
-        if (!(size == 0)) {
-            List<String> strings = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                strings.add(dis.readUTF());
-            }
-            resume.setSection(sectionType, new ListSection(strings));
+        List<String> strings = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            strings.add(dis.readUTF());
         }
+        resume.setSection(sectionType, new ListSection(strings));
     }
 
     private void readOrganizationSection(Resume resume, SectionType sectionType, DataInputStream dis) throws IOException {
         int size = dis.read();
-        if (!(size == 0)) {
-            List<Organization> organizations = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                String nameLink = dis.readUTF();
-                String httpLink = dis.readUTF();
-                int sizePositions = dis.read();
-                List<Position> positions = new ArrayList<>();
-                for (int j = 0; j < sizePositions; j++) {
-                    int yearStart = readDate(dis);
-                    int monthStart = readDate(dis);
-                    int yearEnd = readDate(dis);
-                    int monthEnd = readDate(dis);
-                    String title = dis.readUTF();
-                    String description = dis.readUTF();
-                    positions.add(new Position(YearMonth.of(yearStart, monthStart), YearMonth.of(yearEnd, monthEnd), title
-                            , (description.equals("null") ? null : description)));
-                }
-                organizations.add(new Organization(new Link(nameLink, (httpLink.equals("null") ? null : httpLink)), positions));
+        List<Organization> organizations = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            String nameLink = dis.readUTF();
+            String httpLink = dis.readUTF();
+            int sizePositions = dis.read();
+            List<Position> positions = new ArrayList<>();
+            for (int j = 0; j < sizePositions; j++) {
+                int yearStart = readDate(dis);
+                int monthStart = readDate(dis);
+                int yearEnd = readDate(dis);
+                int monthEnd = readDate(dis);
+                String title = dis.readUTF();
+                String description = dis.readUTF();
+//          Решение для NULL объекта и пустой строки ""
+//                positions.add(new Position(YearMonth.of(yearStart, monthStart), YearMonth.of(yearEnd, monthEnd), title,
+//                        (description.equals("null") ? null : description)));
+//          Решение для NULL объекта
+                positions.add(new Position(YearMonth.of(yearStart, monthStart), YearMonth.of(yearEnd, monthEnd), title,
+                        (description.equals("") ? null : description)));
+//
             }
-            resume.setSection(sectionType, new OrganizationSection(organizations));
+//          Решение для NULL объекта и пустой строки ""
+//            organizations.add(new Organization(new Link(nameLink, (httpLink.equals("null") ? null : httpLink)), positions));
+//          Решение для NULL объекта
+            organizations.add(new Organization(new Link(nameLink, (httpLink.equals("") ? null : httpLink)), positions));
+//
         }
+        resume.setSection(sectionType, new OrganizationSection(organizations));
     }
 
     private int readDate(DataInputStream dis) throws IOException {
