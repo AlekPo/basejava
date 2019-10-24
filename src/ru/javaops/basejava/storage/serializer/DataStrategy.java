@@ -63,22 +63,24 @@ public class DataStrategy implements SerializationStrategy {
             int sizeSections = dis.read();
             for (int i = 0; i < sizeSections; i++) {
                 String sectionName = dis.readUTF();
+                AbstractSection section;
                 switch (sectionName) {
                     case "OBJECTIVE":
                     case "PERSONAL":
-                        resume.setSection(SectionType.valueOf(sectionName), new TextSection(dis.readUTF()));
+                        section = new TextSection(dis.readUTF());
                         break;
                     case "ACHIEVEMENT":
                     case "QUALIFICATIONS":
-                        readStringSection(resume, SectionType.valueOf(sectionName), dis);
+                        section = readStringSection(dis);
                         break;
                     case "EXPERIENCE":
                     case "EDUCATION":
-                        readOrganizationSection(resume, SectionType.valueOf(sectionName), dis);
+                        section = readOrganizationSection(dis);
                         break;
                     default:
                         throw new StorageException("Calling an unknown section from SectionType");
                 }
+                resume.setSection(SectionType.valueOf(sectionName), section);
             }
             return resume;
         }
@@ -113,7 +115,8 @@ public class DataStrategy implements SerializationStrategy {
             List<Position> positions = organization.getPositions();
             dos.write(positions.size());
             for (Position position : positions) {
-                saveDates(position, dos);
+                saveDate(position.getDateStart(), dos);
+                saveDate(position.getDateEnd(), dos);
                 dos.writeUTF(position.getTitle());
 //              Решение для NULL объекта и пустой строки ""
 //                if (Objects.isNull(position.getDescription())) {
@@ -134,27 +137,23 @@ public class DataStrategy implements SerializationStrategy {
         dos.writeUTF(Objects.isNull(str) ? "" : str);
     }
 
-    private void saveDates(Position position, DataOutputStream dos) throws IOException {
-        String yearStart = String.valueOf(position.getDateStart().getYear());
-        dos.writeUTF(yearStart);
-        String monthStart = String.valueOf(position.getDateStart().getMonthValue());
-        dos.writeUTF(monthStart);
-        String yearEnd = String.valueOf(position.getDateEnd().getYear());
-        dos.writeUTF(yearEnd);
-        String monthEnd = String.valueOf(position.getDateEnd().getMonthValue());
-        dos.writeUTF(monthEnd);
+    private void saveDate(YearMonth yearMonth, DataOutputStream dos) throws IOException {
+        String year = String.valueOf(yearMonth.getYear());
+        dos.writeUTF(year);
+        String month = String.valueOf(yearMonth.getMonthValue());
+        dos.writeUTF(month);
     }
 
-    private void readStringSection(Resume resume, SectionType sectionType, DataInputStream dis) throws IOException {
+    private ListSection readStringSection(DataInputStream dis) throws IOException {
         int size = dis.read();
         List<String> strings = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             strings.add(dis.readUTF());
         }
-        resume.setSection(sectionType, new ListSection(strings));
+        return new ListSection(strings);
     }
 
-    private void readOrganizationSection(Resume resume, SectionType sectionType, DataInputStream dis) throws IOException {
+    private OrganizationSection readOrganizationSection(DataInputStream dis) throws IOException {
         int size = dis.read();
         List<Organization> organizations = new ArrayList<>();
         for (int i = 0; i < size; i++) {
@@ -181,7 +180,7 @@ public class DataStrategy implements SerializationStrategy {
             organizations.add(new Organization(new Link(nameLink, (httpLink.equals("") ? null : httpLink)), positions));
 //
         }
-        resume.setSection(sectionType, new OrganizationSection(organizations));
+        return new OrganizationSection(organizations);
     }
 
     private YearMonth readDate(DataInputStream dis) throws IOException {
