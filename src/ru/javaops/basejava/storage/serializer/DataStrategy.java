@@ -6,8 +6,8 @@ import ru.javaops.basejava.model.*;
 import java.io.*;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class DataStrategy implements SerializationStrategy {
@@ -18,16 +18,13 @@ public class DataStrategy implements SerializationStrategy {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
             //contacts
-            int sizeContacts = resume.getContacts().size();
-            dos.write(sizeContacts);
-            for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+            writeCollection(dos, resume.getContacts().entrySet(), entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
+            });
+
             //sections
-            int sizeSections = resume.getSections().size();
-            dos.write(sizeSections);
-            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+            writeCollection(dos, resume.getSections().entrySet(), entry -> {
                 SectionType section = entry.getKey();
                 dos.writeUTF(section.name());
                 switch (section) {
@@ -46,7 +43,7 @@ public class DataStrategy implements SerializationStrategy {
                     default:
                         throw new StorageException("Calling an unknown section from SectionType");
                 }
-            }
+            });
         }
     }
 
@@ -83,6 +80,18 @@ public class DataStrategy implements SerializationStrategy {
                 resume.setSection(SectionType.valueOf(sectionName), section);
             }
             return resume;
+        }
+    }
+
+    private interface ElementWriter<T> {
+        void write(T t) throws IOException;
+    }
+
+    private <T> void writeCollection(DataOutputStream dos, Collection<T> collection, ElementWriter<T> writer) throws IOException {
+        Objects.requireNonNull(collection);
+        dos.write(collection.size());
+        for (T t : collection) {
+            writer.write(t);
         }
     }
 
