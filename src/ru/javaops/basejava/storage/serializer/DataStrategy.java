@@ -22,7 +22,6 @@ public class DataStrategy implements SerializationStrategy {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             });
-
             //sections
             writeCollection(dos, resume.getSections().entrySet(), entry -> {
                 SectionType section = entry.getKey();
@@ -52,13 +51,9 @@ public class DataStrategy implements SerializationStrategy {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume resume = new Resume(dis.readUTF(), dis.readUTF());
             //contacts
-            int sizeContacts = dis.read();
-            for (int i = 0; i < sizeContacts; i++) {
-                resume.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
+            readCollection(dis, () -> resume.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             //sections
-            int sizeSections = dis.read();
-            for (int i = 0; i < sizeSections; i++) {
+            readCollection(dis, () -> {
                 String sectionName = dis.readUTF();
                 AbstractSection section;
                 switch (sectionName) {
@@ -78,11 +73,12 @@ public class DataStrategy implements SerializationStrategy {
                         throw new StorageException("Calling an unknown section from SectionType");
                 }
                 resume.setSection(SectionType.valueOf(sectionName), section);
-            }
+            });
             return resume;
         }
     }
 
+    @FunctionalInterface
     private interface ElementWriter<T> {
         void write(T t) throws IOException;
     }
@@ -97,53 +93,36 @@ public class DataStrategy implements SerializationStrategy {
 
     private void saveStringSection(Resume resume, SectionType sectionType, DataOutputStream dos) throws IOException {
         List<String> strings = ((ListSection) resume.getSection(sectionType)).getItems();
-        int size = strings.size();
-        dos.write(size);
-        for (String string : strings) {
-            dos.writeUTF(string);
-        }
+        writeCollection(dos, strings, dos::writeUTF);
     }
 
     private void saveOrganizationSection(Resume resume, SectionType sectionType, DataOutputStream dos) throws IOException {
         List<Organization> organizations = ((OrganizationSection) resume.getSection(sectionType)).getOrganizations();
-        dos.write(organizations.size());
-        for (Organization organization : organizations) {
+        writeCollection(dos, organizations, organization -> {
             dos.writeUTF(organization.getHomePage().getName());
-//          Решение для NULL объекта и пустой строки ""
-//            String nullStr = "null";
-//            if (Objects.isNull(organization.getHomePage().getUrl())) {
-//                dos.writeUTF(nullStr);
-//            } else if (organization.getHomePage().getUrl().isEmpty()) {
-//                dos.writeUTF("");
-//            } else {
-//                dos.writeUTF(organization.getHomePage().getUrl());
-//            }
-//          Решение для NULL объекта
             saveCheckIsNull(organization.getHomePage().getUrl(), dos);
-//
             List<Position> positions = organization.getPositions();
             dos.write(positions.size());
             for (Position position : positions) {
                 saveDate(position.getDateStart(), dos);
                 saveDate(position.getDateEnd(), dos);
                 dos.writeUTF(position.getTitle());
-//              Решение для NULL объекта и пустой строки ""
-//                if (Objects.isNull(position.getDescription())) {
-//                    dos.writeUTF(nullStr);
-//                } else if (position.getDescription().isEmpty()) {
-//                    dos.writeUTF("");
-//                } else {
-//                    dos.writeUTF(position.getDescription());
-//                }
-//              Решение для NULL объекта
                 saveCheckIsNull(position.getDescription(), dos);
-//
             }
-        }
+        });
     }
 
     private void saveCheckIsNull(String str, DataOutputStream dos) throws IOException {
-        dos.writeUTF(Objects.isNull(str) ? "" : str);
+//          Решение только для для NULL объекта.
+//        dos.writeUTF(Objects.isNull(str) ? "" : str);
+//          Решение для NULL объекта и пустой строки "".
+        if (Objects.isNull(str)) {
+            dos.writeUTF("null");
+        } else if (str.isEmpty()) {
+            dos.writeUTF("");
+        } else {
+            dos.writeUTF(str);
+        }
     }
 
     private void saveDate(YearMonth yearMonth, DataOutputStream dos) throws IOException {
@@ -153,43 +132,47 @@ public class DataStrategy implements SerializationStrategy {
         dos.writeUTF(month);
     }
 
-    private ListSection readStringSection(DataInputStream dis) throws IOException {
+    @FunctionalInterface
+    private interface ElementReader {
+        void read() throws IOException;
+    }
+
+    private void readCollection(DataInputStream dis, ElementReader reader) throws IOException {
         int size = dis.read();
-        List<String> strings = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            strings.add(dis.readUTF());
+            reader.read();
         }
+    }
+
+    private ListSection readStringSection(DataInputStream dis) throws IOException {
+        List<String> strings = new ArrayList<>();
+        readCollection(dis, () -> strings.add(dis.readUTF()));
         return new ListSection(strings);
     }
 
     private OrganizationSection readOrganizationSection(DataInputStream dis) throws IOException {
-        int size = dis.read();
         List<Organization> organizations = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
+        readCollection(dis, () -> {
             String nameLink = dis.readUTF();
             String httpLink = dis.readUTF();
-            int sizePositions = dis.read();
             List<Position> positions = new ArrayList<>();
-            for (int j = 0; j < sizePositions; j++) {
+            readCollection(dis, () -> {
                 YearMonth dateStart = readDate(dis);
                 YearMonth dateEnd = readDate(dis);
                 String title = dis.readUTF();
                 String description = dis.readUTF();
-//          Решение для NULL объекта и пустой строки ""
-//                String nullStr = "null";
-//                positions.add(new Position(dateStart, dateEnd, title, (description.equals(nullStr) ? null : description)));
-//          Решение для NULL объекта
-                positions.add(new Position(dateStart, dateEnd, title, (description.equals("") ? null : description)));
-//
-            }
-//          Решение для NULL объекта и пустой строки ""
-//            String nullStr = "null";
-//            organizations.add(new Organization(new Link(nameLink, (httpLink.equals(nullStr) ? null : httpLink)), positions));
-//          Решение для NULL объекта
-            organizations.add(new Organization(new Link(nameLink, (httpLink.equals("") ? null : httpLink)), positions));
-//
-        }
+                positions.add(new Position(dateStart, dateEnd, title, readCheckIsNull(description)));
+            });
+            organizations.add(new Organization(new Link(nameLink, readCheckIsNull(httpLink)), positions));
+        });
         return new OrganizationSection(organizations);
+    }
+
+    private String readCheckIsNull(String str) {
+//          Решение только для NULL объекта.
+//        return (str.equals("") ? null : str);
+//          Решение для NULL объекта и пустой строки "".
+        return str.equals("null") ? null : str;
     }
 
     private YearMonth readDate(DataInputStream dis) throws IOException {
