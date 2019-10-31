@@ -102,27 +102,26 @@ public class DataStrategy implements SerializationStrategy {
             dos.writeUTF(organization.getHomePage().getName());
             saveCheckIsNull(organization.getHomePage().getUrl(), dos);
             List<Position> positions = organization.getPositions();
-            dos.write(positions.size());
-            for (Position position : positions) {
+            writeCollection(dos, positions, position -> {
                 saveDate(position.getDateStart(), dos);
                 saveDate(position.getDateEnd(), dos);
                 dos.writeUTF(position.getTitle());
                 saveCheckIsNull(position.getDescription(), dos);
-            }
+            });
         });
     }
 
     private void saveCheckIsNull(String str, DataOutputStream dos) throws IOException {
 //          Решение только для для NULL объекта.
-//        dos.writeUTF(Objects.isNull(str) ? "" : str);
+        dos.writeUTF(Objects.isNull(str) ? "" : str);
 //          Решение для NULL объекта и пустой строки "".
-        if (Objects.isNull(str)) {
-            dos.writeUTF("null");
-        } else if (str.isEmpty()) {
-            dos.writeUTF("");
-        } else {
-            dos.writeUTF(str);
-        }
+//        if (Objects.isNull(str)) {
+//            dos.writeUTF("null");
+//        } else if (str.isEmpty()) {
+//            dos.writeUTF("");
+//        } else {
+//            dos.writeUTF(str);
+//        }
     }
 
     private void saveDate(YearMonth yearMonth, DataOutputStream dos) throws IOException {
@@ -170,9 +169,9 @@ public class DataStrategy implements SerializationStrategy {
 
     private String readCheckIsNull(String str) {
 //          Решение только для NULL объекта.
-//        return (str.equals("") ? null : str);
+        return (str.equals("") ? null : str);
 //          Решение для NULL объекта и пустой строки "".
-        return str.equals("null") ? null : str;
+//        return str.equals("null") ? null : str;
     }
 
     private YearMonth readDate(DataInputStream dis) throws IOException {
