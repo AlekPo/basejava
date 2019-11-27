@@ -22,7 +22,7 @@ public class TestDeadLock {
 
         private void transaction(Acc target, float sum) {
             synchronized (this) {
-                if (accSum >= sum & sum > 0) {
+                if (this.accSum >= sum & sum > 0) {
                     this.accSum -= sum;
                 } else {
                     System.out.println("Invalid amount");
