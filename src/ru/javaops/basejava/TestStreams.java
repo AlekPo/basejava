@@ -1,7 +1,6 @@
 package ru.javaops.basejava;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -36,25 +35,11 @@ public class TestStreams {
 //    Не использовать преобразование в строку и обратно.
 //    Например {1,2,3,3,2,3} вернет 123, а {9,8} вернет 89
 
-//    Вариант 1
-//        int res = 0;
-//        try {
-//            res = IntStream.of(values)
-//                    .distinct()
-//                    .sorted()
-//                    .reduce((x, y) -> x * 10 + y)
-//                    .getAsInt();
-//        } catch (NoSuchElementException e) {
-//            System.out.println("Массив 'int[] values' пустой!");
-//        }
-//        return res;
-
-//    Вариант 2
         return IntStream.of(values)
                 .distinct()
                 .sorted()
                 .reduce((x, y) -> x * 10 + y)
-                .orElseThrow(() -> new NoSuchElementException("Массив 'int[] values' пустой!"));
+                .orElse(0);
     }
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
@@ -69,10 +54,8 @@ public class TestStreams {
 
         boolean evenSum = ((sum % 2) == 0);
 
-        List<Integer> results = integers.stream()
-                .filter(x -> evenSum == !(x % 2 == 0))
+        return integers.stream()
+                .filter(x -> evenSum != (x % 2 == 0))
                 .collect(Collectors.toList());
-
-        return results;
     }
 }
