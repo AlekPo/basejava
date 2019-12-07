@@ -3,6 +3,7 @@ package ru.javaops.basejava.storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import ru.javaops.basejava.Config;
 import ru.javaops.basejava.ResumeTestData;
 import ru.javaops.basejava.exception.ExistStorageException;
 import ru.javaops.basejava.exception.NotExistStorageException;
@@ -14,7 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
-    protected static final String STORAGE_DIR = "storage";
+    //    protected static final String STORAGE_DIR = "storage";
+    protected static final String STORAGE_DIR = Config.get().getStorageDir();
     protected Storage storage;
     private static final String UUID_1 = "uuid1";
     private static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");
