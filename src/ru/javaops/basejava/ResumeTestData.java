@@ -19,9 +19,10 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resumeTest = new Resume(uuid, fullName);
-        initContact(resumeTest);
+//  Для тестирования sql storage
+/*        initContact(resumeTest);
         initSection(resumeTest);
-        initPrint(resumeTest);
+        initPrint(resumeTest);*/
         return resumeTest;
     }
 
