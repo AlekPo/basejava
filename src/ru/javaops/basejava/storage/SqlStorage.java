@@ -1,13 +1,11 @@
 package ru.javaops.basejava.storage;
 
-import ru.javaops.basejava.exception.ExistStorageException;
 import ru.javaops.basejava.exception.NotExistStorageException;
 import ru.javaops.basejava.model.Resume;
 import ru.javaops.basejava.sql.SqlExecutive;
 import ru.javaops.basejava.sql.SqlHelper;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         String strSql = "DELETE FROM resume";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Resume>) ps -> {
+        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
             ps.execute();
             return null;
         });
@@ -43,10 +41,12 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume resume) {
         String strSql = "UPDATE resume SET full_name = ? WHERE uuid = ?";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Resume>) ps -> {
+        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
             ps.setString(1, resume.getFullName());
             ps.setString(2, resume.getUuid());
-            if (ps.executeUpdate() == 0) throw new NotExistStorageException(resume.getUuid());
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(resume.getUuid());
+            }
             return null;
         });
     }
@@ -54,14 +54,10 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume resume) {
         String strSql = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Resume>) ps -> {
+        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
             ps.setString(1, resume.getUuid());
             ps.setString(2, resume.getFullName());
-            try {
-                ps.execute();
-            } catch (SQLException e) {
-                throw new ExistStorageException(resume.getUuid());
-            }
+            ps.execute();
             return null;
         });
     }
@@ -69,9 +65,11 @@ public class SqlStorage implements Storage {
     @Override
     public void delete(String uuid) {
         String strSql = "DELETE FROM resume WHERE resume.uuid = ?";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Resume>) ps -> {
+        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
             ps.setString(1, uuid);
-            if (ps.executeUpdate() == 0) throw new NotExistStorageException(uuid);
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(uuid);
+            }
             return null;
         });
     }
@@ -95,8 +93,7 @@ public class SqlStorage implements Storage {
         return sqlHelper.executiveInterface(strSql, ps -> {
             ResultSet rs = ps.executeQuery();
             rs.next();
-            int count = rs.getInt(1);
-            return count;
+            return rs.getInt(1);
         });
     }
 }
