@@ -2,7 +2,6 @@ package ru.javaops.basejava.storage;
 
 import ru.javaops.basejava.exception.NotExistStorageException;
 import ru.javaops.basejava.model.Resume;
-import ru.javaops.basejava.sql.SqlExecutive;
 import ru.javaops.basejava.sql.SqlHelper;
 
 import java.sql.ResultSet;
@@ -19,7 +18,7 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         String strSql = "DELETE FROM resume";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
+        sqlHelper.executiveInterface(strSql, ps -> {
             ps.execute();
             return null;
         });
@@ -41,7 +40,7 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume resume) {
         String strSql = "UPDATE resume SET full_name = ? WHERE uuid = ?";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
+        sqlHelper.executiveInterface(strSql, ps -> {
             ps.setString(1, resume.getFullName());
             ps.setString(2, resume.getUuid());
             if (ps.executeUpdate() == 0) {
@@ -54,7 +53,7 @@ public class SqlStorage implements Storage {
     @Override
     public void save(Resume resume) {
         String strSql = "INSERT INTO resume (uuid, full_name) VALUES (?,?)";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
+        sqlHelper.executiveInterface(strSql, ps -> {
             ps.setString(1, resume.getUuid());
             ps.setString(2, resume.getFullName());
             ps.execute();
@@ -65,7 +64,7 @@ public class SqlStorage implements Storage {
     @Override
     public void delete(String uuid) {
         String strSql = "DELETE FROM resume WHERE resume.uuid = ?";
-        sqlHelper.executiveInterface(strSql, (SqlExecutive<Void>) ps -> {
+        sqlHelper.executiveInterface(strSql, ps -> {
             ps.setString(1, uuid);
             if (ps.executeUpdate() == 0) {
                 throw new NotExistStorageException(uuid);
@@ -77,7 +76,7 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         List<Resume> resumes = new ArrayList<>();
-        String strSql = "SELECT * FROM resume ORDER BY resume.uuid";
+        String strSql = "SELECT * FROM resume ORDER BY resume.full_name, resume.uuid";
         return sqlHelper.executiveInterface(strSql, ps -> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
