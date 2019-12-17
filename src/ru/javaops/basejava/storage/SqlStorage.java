@@ -11,7 +11,7 @@ import java.util.List;
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
 
-    SqlStorage(String dbUrl, String dbUser, String dbPassword) {
+    public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         sqlHelper = new SqlHelper(dbUrl, dbUser, dbPassword);
     }
 
@@ -91,8 +91,7 @@ public class SqlStorage implements Storage {
         String strSql = "SELECT COUNT(*) FROM resume";
         return sqlHelper.executiveInterface(strSql, ps -> {
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
+            return rs.next() ? rs.getInt(1) : 0;
         });
     }
 }

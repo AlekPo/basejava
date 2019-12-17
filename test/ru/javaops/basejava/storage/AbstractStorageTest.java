@@ -9,22 +9,19 @@ import ru.javaops.basejava.exception.ExistStorageException;
 import ru.javaops.basejava.exception.NotExistStorageException;
 import ru.javaops.basejava.model.Resume;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractStorageTest {
     //    protected static final String STORAGE_DIR = "storage";
-    protected static final String STORAGE_DIR = Config.get().getStorageDir();
+    static final String STORAGE_DIR = Config.get().getStorageDir();
     protected Storage storage;
-    private static final String UUID_1 = "uuid1";
+    private static final String UUID_1 = UUID.randomUUID().toString();
     private static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");
-    private static final String UUID_2 = "uuid2";
+    private static final String UUID_2 = UUID.randomUUID().toString();
     private static final Resume RESUME_2 = ResumeTestData.createResume(UUID_2, "Name2");
-    private static final String UUID_3 = "uuid3";
+    private static final String UUID_3 = UUID.randomUUID().toString();
     private static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
-    private static final String UUID_4 = "uuid4";
+    private static final String UUID_4 = UUID.randomUUID().toString();
     private static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Name4");
 
     protected AbstractStorageTest(Storage storage) {

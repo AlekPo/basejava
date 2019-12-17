@@ -1,5 +1,8 @@
 package ru.javaops.basejava;
 
+import ru.javaops.basejava.storage.SqlStorage;
+import ru.javaops.basejava.storage.Storage;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,11 +13,11 @@ public class Config {
     private static final File PROPS = new File("config\\resumes.properties");
     private static final Config INSTANCE = new Config();
 
-    private Properties props = new Properties();
-    private String storageDir;
-    private String dbUrl;
-    private String dbUser;
-    private String dbPassword;
+    private final String storageDir;
+    private final String dbUrl;
+    private final String dbUser;
+    private final String dbPassword;
+    private final Storage storage;
 
     public static Config get() {
         return INSTANCE;
@@ -22,11 +25,13 @@ public class Config {
 
     private Config() {
         try (InputStream is = new FileInputStream(PROPS)) {
+            Properties props = new Properties();
             props.load(is);
             storageDir = props.getProperty("storage.dir");
             dbUrl = props.getProperty("db.url");
             dbUser = props.getProperty("db.user");
             dbPassword = props.getProperty("db.password");
+            storage = new SqlStorage(dbUrl, dbUser, dbPassword);
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
@@ -46,5 +51,9 @@ public class Config {
 
     public String getDbPassword() {
         return dbPassword;
+    }
+
+    public Storage getStorage() {
+        return storage;
     }
 }
