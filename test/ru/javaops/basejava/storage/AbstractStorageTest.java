@@ -11,6 +11,8 @@ import ru.javaops.basejava.model.Resume;
 
 import java.util.*;
 
+import static ru.javaops.basejava.model.ContactType.*;
+
 public abstract class AbstractStorageTest {
     //    protected static final String STORAGE_DIR = "storage";
     static final String STORAGE_DIR = Config.get().getStorageDir();
@@ -99,6 +101,15 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(UUID_3, "New Name");
+
+        newResume.setContact(MOBILE, "1234567");
+        newResume.setContact(SKYPE, "skype");
+        newResume.setContact(MAIL, "mail");
+        newResume.setContact(LINKEDIN, "linkedin");
+        newResume.setContact(GITHUB, "github");
+        newResume.setContact(STACKOVERFLOW, "stackoverflow");
+        newResume.setContact(HOME_PAGE, "www");
+
         storage.update(newResume);
         Assert.assertEquals(newResume, storage.get(UUID_3));
     }
