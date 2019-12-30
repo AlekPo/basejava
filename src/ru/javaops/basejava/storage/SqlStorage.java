@@ -6,9 +6,12 @@ import ru.javaops.basejava.model.ContactType;
 import ru.javaops.basejava.model.Resume;
 import ru.javaops.basejava.sql.SqlHelper;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -62,22 +65,10 @@ public class SqlStorage implements Storage {
                 " WHERE resume_uuid = ? AND type = ?";
 
         sqlHelper.transactionalExecutive(conn -> {
-            try (PreparedStatement ps = conn.prepareStatement(strSql1)) {
-                ps.setString(1, resume.getFullName());
-                ps.setString(2, resume.getUuid());
-                if (ps.executeUpdate() == 0) {
-                    throw new NotExistStorageException(resume.getUuid());
-                }
-            }
-            try (PreparedStatement ps = conn.prepareStatement(strSql2)) {
-                for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-                    ps.setString(1, entry.getValue());
-                    ps.setString(2, resume.getUuid());
-                    ps.setString(3, entry.getKey().name());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-            }
+            String uuid = resume.getUuid();
+            String fullName = resume.getFullName();
+            upResume(conn, resume, strSql1, fullName, uuid);
+            upContact(conn, resume, strSql2, "value", "uuid", "type");
             return null;
         });
     }
@@ -93,20 +84,10 @@ public class SqlStorage implements Storage {
                 " VALUES (?,?,?)";
 
         sqlHelper.transactionalExecutive(conn -> {
-            try (PreparedStatement ps = conn.prepareStatement(strSql1)) {
-                ps.setString(1, resume.getUuid());
-                ps.setString(2, resume.getFullName());
-                ps.execute();
-            }
-            try (PreparedStatement ps = conn.prepareStatement(strSql2)) {
-                for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-                    ps.setString(1, resume.getUuid());
-                    ps.setString(2, entry.getKey().name());
-                    ps.setString(3, entry.getValue());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-            }
+            String uuid = resume.getUuid();
+            String fullName = resume.getFullName();
+            upResume(conn, resume, strSql1, uuid, fullName);
+            upContact(conn, resume, strSql2, "uuid", "type", "value");
             return null;
         });
     }
@@ -240,5 +221,32 @@ public class SqlStorage implements Storage {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getInt(1) : 0;
         });
+    }
+
+
+    private void upResume(Connection conn, Resume resume, String strSql, String param1, String param2) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(strSql)) {
+            ps.setString(1, param1);
+            ps.setString(2, param2);
+            if (ps.executeUpdate() == 0) {
+                throw new NotExistStorageException(resume.getUuid());
+            }
+        }
+    }
+
+    private void upContact(Connection conn, Resume resume, String strSql, String param1, String param2, String param3) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(strSql)) {
+            Map<String, String> contactMap = new HashMap<>(3);
+            contactMap.put("uuid", resume.getUuid());
+            for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+                contactMap.put("type", entry.getKey().name());
+                contactMap.put("value", entry.getValue());
+                ps.setString(1, contactMap.get(param1));
+                ps.setString(2, contactMap.get(param2));
+                ps.setString(3, contactMap.get(param3));
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
     }
 }
