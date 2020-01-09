@@ -14,16 +14,16 @@ public class SqlHelper {
         connectionFactory = () -> DriverManager.getConnection(dbUrl, dbUser, dbPassword);
     }
 
-    public <T> T executive(String strSql, SqlExecutive<T> sqlExecutive) {
+    public <T> T execute(String strSql, SqlExecutable<T> sqlExecutable) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(strSql)) {
-            return sqlExecutive.executive(ps);
+            return sqlExecutable.executive(ps);
         } catch (SQLException e) {
             throw ExceptionUtil.convertException(e);
         }
     }
 
-    public <T> T transactionalExecutive(SqlTransaction<T> sqlTransaction) {
+    public <T> T transactionalExecute(SqlTransaction<T> sqlTransaction) {
         try (Connection conn = connectionFactory.getConnection()) {
             try {
                 conn.setAutoCommit(false);
