@@ -17,7 +17,7 @@ public class SqlHelper {
     public <T> T execute(String strSql, SqlExecutable<T> sqlExecutable) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(strSql)) {
-            return sqlExecutable.executive(ps);
+            return sqlExecutable.execute(ps);
         } catch (SQLException e) {
             throw ExceptionUtil.convertException(e);
         }
@@ -27,7 +27,7 @@ public class SqlHelper {
         try (Connection conn = connectionFactory.getConnection()) {
             try {
                 conn.setAutoCommit(false);
-                T res = sqlTransaction.executive(conn);
+                T res = sqlTransaction.execute(conn);
                 conn.commit();
                 return res;
             } catch (SQLException e) {
