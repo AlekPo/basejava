@@ -43,9 +43,7 @@ public class SqlStorage implements Storage {
             Resume resume = new Resume(uuid, rs.getString("full_name"));
             if (Objects.nonNull(rs.getString("type"))) {
                 do {
-                    ContactType type = ContactType.valueOf(rs.getString("type"));
-                    String value = rs.getString("value");
-                    resume.setContact(type, value);
+                    addContact(rs, resume);
                 } while (rs.next());
             }
             return resume;
@@ -103,22 +101,20 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        Map<String, Resume> map = new LinkedHashMap<>();
         String strSql = "" +
                 "    SELECT * FROM resume" +
                 " LEFT JOIN contact " +
                 "        ON resume.uuid = contact.resume_uuid " +
                 "  ORDER BY resume.full_name, resume.uuid";
+        Map<String, Resume> map = new LinkedHashMap<>();
         return sqlHelper.execute(strSql, ps -> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String uuid = rs.getString("uuid").trim();
                 String full_name = rs.getString("full_name");
-                map.computeIfAbsent(uuid, (v -> new Resume(uuid, full_name)));
+                Resume resume = map.computeIfAbsent(uuid, (v -> new Resume(uuid, full_name)));
                 if (Objects.nonNull(rs.getString("type"))) {
-                    ContactType type = ContactType.valueOf(rs.getString("type"));
-                    String value = rs.getString("value");
-                    map.get(uuid).setContact(type, value);
+                    addContact(rs, resume);
                 }
             }
             return new ArrayList<>(map.values());
@@ -162,5 +158,11 @@ public class SqlStorage implements Storage {
             }
             ps.executeBatch();
         }
+    }
+
+    private void addContact(ResultSet rs, Resume resume) throws SQLException {
+        ContactType type = ContactType.valueOf(rs.getString("type"));
+        String value = rs.getString("value");
+        resume.setContact(type, value);
     }
 }
