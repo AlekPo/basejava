@@ -5,26 +5,20 @@ import ru.javaops.basejava.model.ContactType;
 import ru.javaops.basejava.model.Resume;
 import ru.javaops.basejava.sql.SqlHelper;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
 
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
-        sqlHelper = new SqlHelper(dbUrl, dbUser, dbPassword);
+        sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
     }
 
     @Override
     public void clear() {
         String strSql = "DELETE FROM resume";
-        sqlHelper.execute(strSql, ps -> {
-            ps.execute();
-            return null;
-        });
+        sqlHelper.execute(strSql);
     }
 
     @Override
@@ -41,11 +35,9 @@ public class SqlStorage implements Storage {
                 throw new NotExistStorageException(uuid);
             }
             Resume resume = new Resume(uuid, rs.getString("full_name"));
-            if (Objects.nonNull(rs.getString("type"))) {
-                do {
-                    addContact(rs, resume);
-                } while (rs.next());
-            }
+            do {
+                addContact(rs, resume);
+            } while (rs.next());
             return resume;
         });
     }
@@ -63,8 +55,8 @@ public class SqlStorage implements Storage {
                     throw new NotExistStorageException(resume.getUuid());
                 }
             }
-            deleteContact(conn, resume);
-            saveContact(conn, resume);
+            deleteContacts(conn, resume);
+            insertContacts(conn, resume);
             return null;
         });
     }
@@ -80,7 +72,7 @@ public class SqlStorage implements Storage {
                 ps.setString(2, resume.getFullName());
                 ps.execute();
             }
-            saveContact(conn, resume);
+            insertContacts(conn, resume);
             return null;
         });
     }
@@ -113,9 +105,7 @@ public class SqlStorage implements Storage {
                 String uuid = rs.getString("uuid").trim();
                 String full_name = rs.getString("full_name");
                 Resume resume = map.computeIfAbsent(uuid, (v -> new Resume(uuid, full_name)));
-                if (Objects.nonNull(rs.getString("type"))) {
-                    addContact(rs, resume);
-                }
+                addContact(rs, resume);
             }
             return new ArrayList<>(map.values());
         });
@@ -133,18 +123,19 @@ public class SqlStorage implements Storage {
     }
 
 
-    private void deleteContact(Connection conn, Resume resume) throws SQLException {
+    private void deleteContacts(Connection conn, Resume resume) {
         String strSql = "" +
                 "DELETE FROM contact" +
                 " WHERE resume_uuid = ?";
         String uuid = resume.getUuid();
-        try (PreparedStatement ps = conn.prepareStatement(strSql)) {
+        sqlHelper.execute(strSql, ps -> {
             ps.setString(1, uuid);
             ps.execute();
-        }
+            return null;
+        });
     }
 
-    private void saveContact(Connection conn, Resume resume) throws SQLException {
+    private void insertContacts(Connection conn, Resume resume) throws SQLException {
         String strSql = "" +
                 "INSERT INTO contact (resume_uuid, type, value)" +
                 " VALUES (?,?,?)";
@@ -161,8 +152,10 @@ public class SqlStorage implements Storage {
     }
 
     private void addContact(ResultSet rs, Resume resume) throws SQLException {
-        ContactType type = ContactType.valueOf(rs.getString("type"));
-        String value = rs.getString("value");
-        resume.setContact(type, value);
+        if (Objects.nonNull(rs.getString("type"))) {
+            ContactType type = ContactType.valueOf(rs.getString("type"));
+            String value = rs.getString("value");
+            resume.setContact(type, value);
+        }
     }
 }
