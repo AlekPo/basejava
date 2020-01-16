@@ -3,7 +3,6 @@ package ru.javaops.basejava;
 
 import ru.javaops.basejava.model.*;
 
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,11 +18,10 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resumeTest = new Resume(uuid, fullName);
-//  Для тестирования sql storage
         initContact(resumeTest);
+        initSection(resumeTest);
 //  Для тестирования sql storage
-/*        initSection(resumeTest);
-        initPrint(resumeTest);*/
+//        initPrint(resumeTest);
         return resumeTest;
     }
 
@@ -81,6 +79,8 @@ public class ResumeTestData {
         qualifications.add("программирования");
         qualifications.add("Родной русский, английский \"upper intermediate\"");
         resumeTest.setSection(QUALIFICATIONS, new ListSection(qualifications));
+//  Для тестирования sql storage
+/*
 //EXPERIENCE
         List<Organization> experience = new ArrayList<>();
         experience.add(new Organization("Java Online Projects", "http://javaops.ru/", new Position(YearMonth.of(2013, 10), YearMonth.now(), "Автор проекта.", "Создание, организация и проведение Java онлайн проектов и стажировок.")));
@@ -114,6 +114,7 @@ public class ResumeTestData {
         education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", new Position(YearMonth.of(1984, 9), YearMonth.of(1987, 6), "Закончил с отличием", null)));
 //
         resumeTest.setSection(EDUCATION, new OrganizationSection(education));
+*/
     }
 
     private static void initPrint(Resume resumeTest) {

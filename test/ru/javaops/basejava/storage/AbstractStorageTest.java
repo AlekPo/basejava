@@ -7,11 +7,14 @@ import ru.javaops.basejava.Config;
 import ru.javaops.basejava.ResumeTestData;
 import ru.javaops.basejava.exception.ExistStorageException;
 import ru.javaops.basejava.exception.NotExistStorageException;
+import ru.javaops.basejava.model.ListSection;
 import ru.javaops.basejava.model.Resume;
+import ru.javaops.basejava.model.TextSection;
 
 import java.util.*;
 
 import static ru.javaops.basejava.model.ContactType.*;
+import static ru.javaops.basejava.model.SectionType.*;
 
 public abstract class AbstractStorageTest {
     //    protected static final String STORAGE_DIR = "storage";
@@ -109,6 +112,40 @@ public abstract class AbstractStorageTest {
         newResume.setContact(GITHUB, "github");
         newResume.setContact(STACKOVERFLOW, "stackoverflow");
         newResume.setContact(HOME_PAGE, "www");
+
+        //OBJECTIVE
+        newResume.setSection(OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям."));
+        //PERSONAL
+        newResume.setSection(PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность, инициативность."));
+        //ACHIEVEMENT
+        List<String> achievement = new ArrayList<>();
+        achievement.add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\", \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP). Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов. Более 1000 выпускников. ");
+        achievement.add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk. ");
+        achievement.add("Налаживание процесса разработки и непрерывной интеграции ERP системы River BPM. Интеграция с 1С, Bonita BPM, CMIS, LDAP. Разработка приложения управления окружением на стеке: Scala/Play/Anorm/JQuery. Разработка SSO аутентификации и авторизации различных ERP модулей, интеграция CIFS/SMB java сервера. ");
+        achievement.add("Реализация c нуля Rich Internet Application приложения на стеке технологий JPA, Spring, Spring-MVC, GWT, ExtGWT (GXT), Commet, HTML5, Highstock для алгоритмического трейдинга. ");
+        achievement.add("Создание JavaEE фреймворка для отказоустойчивого взаимодействия слабо-связанных сервисов (SOA-base архитектура, JAX-WS, JMS, AS Glassfish). Сбор статистики сервисов и информации о состоянии через систему мониторинга Nagios. Реализация онлайн клиента для администрирования и мониторинга системы по JMX (Jython/ Django). ");
+        achievement.add("Реализация протоколов по приему платежей всех основных платежных системы России (Cyberplat, Eport, Chronopay, Сбербанк), Белоруcсии(Erip, Osmp) и Никарагуа. ");
+        newResume.setSection(ACHIEVEMENT, new ListSection(achievement));
+        //QUALIFICATIONS
+        List<String> qualifications = new ArrayList<>();
+        qualifications.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2 ");
+        qualifications.add("Version control: Subversion, Git, Mercury, ClearCase, Perforce ");
+        qualifications.add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2, Oracle, ");
+        qualifications.add("MySQL, SQLite, MS SQL, HSQLDB ");
+        qualifications.add("Languages: Java, Scala, Python/Jython/PL-Python, JavaScript, Groovy, ");
+        qualifications.add("XML/XSD/XSLT, SQL, C/C++, Unix shell scripts, ");
+        qualifications.add("Java Frameworks: Java 8 (Time API, Streams), Guava, Java Executor, MyBatis, Spring (MVC, Security, Data, Clouds, Boot), JPA (Hibernate, EclipseLink), Guice, GWT(SmartGWT, ExtGWT/GXT), Vaadin, Jasperreports, Apache Commons, Eclipse SWT, JUnit, Selenium (htmlelements). ");
+        qualifications.add("Python: Django. ");
+        qualifications.add("JavaScript: jQuery, ExtJS, Bootstrap.js, underscore.js ");
+        qualifications.add("Scala: SBT, Play2, Specs2, Anorm, Spray, Akka ");
+        qualifications.add("Технологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, StAX, SAX, DOM, XSLT, MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, LDAP, OAuth1, OAuth2, JWT. ");
+        qualifications.add("Инструменты: Maven + plugin development, Gradle, настройка Ngnix, ");
+        qualifications.add("администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, OpenCmis, Bonita, pgBouncer. ");
+        qualifications.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов ");
+        qualifications.add("проектрирования, архитектурных шаблонов, UML, функционального ");
+        qualifications.add("программирования ");
+        qualifications.add("Родной русский, английский \"upper intermediate\" ");
+        newResume.setSection(QUALIFICATIONS, new ListSection(qualifications));
 
         storage.update(newResume);
         Assert.assertEquals(newResume, storage.get(UUID_3));
