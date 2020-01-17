@@ -75,9 +75,9 @@ public class SqlStorage implements Storage {
                     throw new NotExistStorageException(resume.getUuid());
                 }
             }
-            deleteContacts(resume.getUuid());
+            deleteContacts(conn, resume);
             insertContacts(conn, resume);
-            deleteSections(resume.getUuid());
+            deleteSections(conn, resume);
             insertSections(conn, resume);
             return null;
         });
@@ -131,7 +131,7 @@ public class SqlStorage implements Storage {
             try (PreparedStatement ps = conn.prepareStatement(strSql1)) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    String uuid = rs.getString("uuid").trim();
+                    String uuid = rs.getString("uuid");
                     String full_name = rs.getString("full_name");
                     map.put(uuid, new Resume(uuid, full_name));
                 }
@@ -139,14 +139,14 @@ public class SqlStorage implements Storage {
             try (PreparedStatement ps = conn.prepareStatement(strSql2)) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    String uuid = rs.getString("resume_uuid").trim();
+                    String uuid = rs.getString("resume_uuid");
                     addContact(rs, map.get(uuid));
                 }
             }
             try (PreparedStatement ps = conn.prepareStatement(strSql3)) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    String uuid = rs.getString("resume_uuid").trim();
+                    String uuid = rs.getString("resume_uuid");
                     addSection(rs, map.get(uuid));
                 }
             }
@@ -166,15 +166,18 @@ public class SqlStorage implements Storage {
     }
 
 
-    private void deleteContacts(String uuid) {
+    private void deleteContacts(Connection conn, Resume resume) throws SQLException {
         String strSql = "" +
                 "DELETE FROM contact" +
                 " WHERE resume_uuid = ?";
-        sqlHelper.execute(strSql, ps -> {
-            ps.setString(1, uuid);
-            ps.execute();
-            return null;
-        });
+        sqlHelper.execute(conn, strSql, resume.getUuid());
+    }
+
+    private void deleteSections(Connection conn, Resume resume) throws SQLException {
+        String strSql = "" +
+                "DELETE FROM section" +
+                " WHERE resume_uuid = ?";
+        sqlHelper.execute(conn, strSql, resume.getUuid());
     }
 
     private void insertContacts(Connection conn, Resume resume) throws SQLException {
@@ -193,25 +196,6 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void addContact(ResultSet rs, Resume resume) throws SQLException {
-        if (Objects.nonNull(rs.getString("type"))) {
-            ContactType type = ContactType.valueOf(rs.getString("type"));
-            String value = rs.getString("value");
-            resume.setContact(type, value);
-        }
-    }
-
-    private void deleteSections(String uuid) {
-        String strSql = "" +
-                "DELETE FROM section" +
-                " WHERE resume_uuid = ?";
-        sqlHelper.execute(strSql, ps -> {
-            ps.setString(1, uuid);
-            ps.execute();
-            return null;
-        });
-    }
-
     private void insertSections(Connection conn, Resume resume) throws SQLException {
         String strSql = "" +
                 "INSERT INTO section (resume_uuid, type, value)" +
@@ -225,7 +209,7 @@ public class SqlStorage implements Storage {
                 switch (section) {
                     case OBJECTIVE:
                     case PERSONAL:
-                        ps.setString(3, entry.getValue().toString());
+                        ps.setString(3, ((TextSection) entry.getValue()).getContent());
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
@@ -246,6 +230,14 @@ public class SqlStorage implements Storage {
         }
     }
 
+    private void addContact(ResultSet rs, Resume resume) throws SQLException {
+        if (Objects.nonNull(rs.getString("type"))) {
+            ContactType type = ContactType.valueOf(rs.getString("type"));
+            String value = rs.getString("value");
+            resume.setContact(type, value);
+        }
+    }
+
     private void addSection(ResultSet rs, Resume resume) throws SQLException {
         if (Objects.nonNull(rs.getString("type"))) {
             SectionType section = SectionType.valueOf(rs.getString("type"));
@@ -256,10 +248,8 @@ public class SqlStorage implements Storage {
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
-                    List<String> items = new ArrayList<>();
                     String value = rs.getString("value");
-                    Collections.addAll(items, value.split("\n"));
-                    resume.setSection(section, new ListSection(items));
+                    resume.setSection(section, new ListSection(Arrays.asList(value.split("\n"))));
                     break;
 //                    case EXPERIENCE:
 //                    case EDUCATION:

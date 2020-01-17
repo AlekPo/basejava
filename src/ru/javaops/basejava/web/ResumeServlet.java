@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
+    protected Storage storage = Config.get().getStorage();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
@@ -32,7 +34,7 @@ public class ResumeServlet extends HttpServlet {
         StringBuilder builder = new StringBuilder();
         builder.append(strFirst);
         builder.append(strHead);
-        Storage storage = Config.get().getStorage();
+
         List<Resume> list = storage.getAllSorted();
         for (Resume resume : list) {
             strBody = "<tr>\n<td>" + resume.getUuid() + "</td>\n<td>" + resume.getFullName() + "</td>\n</tr>\n";

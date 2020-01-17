@@ -17,6 +17,13 @@ public class SqlHelper {
         execute(sql, PreparedStatement::execute);
     }
 
+    public void execute(Connection conn, String strSql, String strParameter) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(strSql)) {
+            ps.setString(1, strParameter);
+            ps.execute();
+        }
+    }
+
     public <T> T execute(String strSql, SqlExecutable<T> sqlExecutable) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(strSql)) {
