@@ -1,9 +1,12 @@
 package ru.javaops.basejava.storage;
 
 import ru.javaops.basejava.exception.NotExistStorageException;
-import ru.javaops.basejava.exception.StorageException;
-import ru.javaops.basejava.model.*;
+import ru.javaops.basejava.model.AbstractSection;
+import ru.javaops.basejava.model.ContactType;
+import ru.javaops.basejava.model.Resume;
+import ru.javaops.basejava.model.SectionType;
 import ru.javaops.basejava.sql.SqlHelper;
+import ru.javaops.basejava.util.JsonParser;
 
 import java.sql.*;
 import java.util.*;
@@ -14,10 +17,10 @@ public class SqlStorage implements Storage {
     public SqlStorage(String dbUrl, String dbUser, String dbPassword) {
         try {
             Class.forName("org.postgresql.Driver");
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             System.out.println("Where is your PostgreSQL JDBC Driver? " + e.toString() + e.getMessage());
+            throw new IllegalStateException(e);
         }
-
         sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
     }
 
@@ -196,6 +199,7 @@ public class SqlStorage implements Storage {
         }
     }
 
+/*
     private void insertSections(Connection conn, Resume resume) throws SQLException {
         String strSql = "" +
                 "INSERT INTO section (resume_uuid, type, value)" +
@@ -229,6 +233,28 @@ public class SqlStorage implements Storage {
             ps.executeBatch();
         }
     }
+*/
+
+    private void insertSections(Connection conn, Resume resume) throws SQLException {
+        String strSql = "" +
+                "INSERT INTO section (resume_uuid, type, value)" +
+                " VALUES (?,?,?)";
+        try (PreparedStatement ps = conn.prepareStatement(strSql)) {
+            String uuid = resume.getUuid();
+            for (Map.Entry<SectionType, AbstractSection> entry : resume.getSections().entrySet()) {
+                ps.setString(1, uuid);
+                SectionType sectionType = entry.getKey();
+                ps.setString(2, sectionType.name());
+
+                AbstractSection abstractSection = entry.getValue();
+                String value = JsonParser.write(abstractSection, AbstractSection.class);
+
+                ps.setString(3, value);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
 
     private void addContact(ResultSet rs, Resume resume) throws SQLException {
         if (Objects.nonNull(rs.getString("type"))) {
@@ -238,6 +264,7 @@ public class SqlStorage implements Storage {
         }
     }
 
+/*
     private void addSection(ResultSet rs, Resume resume) throws SQLException {
         if (Objects.nonNull(rs.getString("type"))) {
             SectionType section = SectionType.valueOf(rs.getString("type"));
@@ -251,12 +278,24 @@ public class SqlStorage implements Storage {
                     String value = rs.getString("value");
                     resume.setSection(section, new ListSection(Arrays.asList(value.split("\n"))));
                     break;
-//                    case EXPERIENCE:
-//                    case EDUCATION:
-//                        break;
+                //                    case EXPERIENCE:
+                //                    case EDUCATION:
+                //                        break;
                 default:
                     throw new StorageException("Calling an unknown section from SectionType");
             }
+        }
+    }
+*/
+
+    private void addSection(ResultSet rs, Resume resume) throws SQLException {
+        if (Objects.nonNull(rs.getString("type"))) {
+            SectionType sectionType = SectionType.valueOf(rs.getString("type"));
+
+            String value = rs.getString("value");
+            AbstractSection abstractSection = JsonParser.read(value, AbstractSection.class);
+
+            resume.setSection(sectionType, abstractSection);
         }
     }
 
