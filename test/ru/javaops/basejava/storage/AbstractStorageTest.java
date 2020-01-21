@@ -21,13 +21,13 @@ public abstract class AbstractStorageTest {
     static final String STORAGE_DIR = Config.get().getStorageDir();
     protected Storage storage;
     private static final String UUID_1 = UUID.randomUUID().toString();
-    private static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");
+    public static final Resume RESUME_1 = ResumeTestData.createResume(UUID_1, "Name1");
     private static final String UUID_2 = UUID.randomUUID().toString();
-    private static final Resume RESUME_2 = ResumeTestData.createResume(UUID_2, "Name2");
+    public static final Resume RESUME_2 = ResumeTestData.createResume(UUID_2, "Name2");
     private static final String UUID_3 = UUID.randomUUID().toString();
-    private static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
+    public static final Resume RESUME_3 = ResumeTestData.createResume(UUID_3, "Name3");
     private static final String UUID_4 = UUID.randomUUID().toString();
-    private static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Name4");
+    public static final Resume RESUME_4 = ResumeTestData.createResume(UUID_4, "Name4");
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
