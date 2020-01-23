@@ -4,13 +4,12 @@ import ru.javaops.basejava.Config;
 import ru.javaops.basejava.storage.Storage;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "ResumeServlet", urlPatterns = "/poem")
+//@WebServlet(name = "ResumeServlet", urlPatterns = "/resume")
 public class ResumeServlet extends HttpServlet {
     //    protected Storage storage = Config.get().getStorage();
     protected Storage storage;
