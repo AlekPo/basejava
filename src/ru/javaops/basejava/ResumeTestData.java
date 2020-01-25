@@ -75,9 +75,7 @@ public class ResumeTestData {
         qualifications.add("Технологии: Servlet, JSP/JSTL, JAX-WS, REST, EJB, RMI, JMS, JavaMail, JAXB, StAX, SAX, DOM, XSLT, MDB, JMX, JDBC, JPA, JNDI, JAAS, SOAP, AJAX, Commet, HTML5, ESB, CMIS, BPMN2, LDAP, OAuth1, OAuth2, JWT.");
         qualifications.add("Инструменты: Maven + plugin development, Gradle, настройка Ngnix,");
         qualifications.add("администрирование Hudson/Jenkins, Ant + custom task, SoapUI, JPublisher, Flyway, Nagios, iReport, OpenCmis, Bonita, pgBouncer.");
-        qualifications.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов");
-        qualifications.add("проектрирования, архитектурных шаблонов, UML, функционального");
-        qualifications.add("программирования");
+        qualifications.add("Отличное знание и опыт применения концепций ООП, SOA, шаблонов проектирования, архитектурных шаблонов, UML, функционального программирования");
         qualifications.add("Родной русский, английский \"upper intermediate\"");
         resumeTest.setSection(QUALIFICATIONS, new ListSection(qualifications));
 //EXPERIENCE
@@ -106,7 +104,7 @@ public class ResumeTestData {
 //        education.add(new Organization("Заочная физико-техническая школа при МФТИ", "http://www.school.mipt.ru/", new Position(YearMonth.of(1984, 9), YearMonth.of(1987, 6), "Закончил с отличием", "")));
 //      Используется null
         education.add(new Organization("Coursera", "https://www.coursera.org/course/progfun", new Position(YearMonth.of(2013, 3), YearMonth.of(2013, 5), "\"Functional Programming Principles in Scala\" by Martin Odersky", null)));
-        education.add(new Organization("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366", new Position(YearMonth.of(2011, 3), YearMonth.of(2011, 4), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.\"", null)));
+        education.add(new Organization("Luxoft", "http://www.luxoft-training.ru/training/catalog/course.html?ID=22366", new Position(YearMonth.of(2011, 3), YearMonth.of(2011, 4), "Курс \"Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML\"", null)));
         education.add(new Organization("Siemens AG", "http://www.siemens.ru/", new Position(YearMonth.of(2005, 1), YearMonth.of(2005, 4), "3 месяца обучения мобильным IN сетям (Берлин)", null)));
         education.add(new Organization("Alcatel", "http://www.alcatel.ru/", new Position(YearMonth.of(1997, 9), YearMonth.of(1998, 3), "6 месяцев обучения цифровым телефонным сетям (Москва)", null)));
         education.add(new Organization("Санкт-Петербургский национальный исследовательский университет информационных технологий, механики и оптики", "http://www.ifmo.ru/", new Position(YearMonth.of(1993, 9), YearMonth.of(1996, 7), "Аспирантура (программист С, С++)", null), new Position(YearMonth.of(1987, 9), YearMonth.of(1993, 7), "Инженер (программист Fortran, C)", null)));

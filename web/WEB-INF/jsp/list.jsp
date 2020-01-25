@@ -42,6 +42,12 @@
             </tr>
         </c:forEach>
     </table>
+    <br>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th><a href="resume?uuid=&action=edit">Новое резюме</a></th>
+        </tr>
+    </table>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>

@@ -27,20 +27,29 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume resume = storage.get(uuid);
-        resume.setFullName(fullName);
+        Resume resume;
+        if (!"0".equals(uuid)) {
+            resume = storage.get(uuid);
+            resume.setFullName(fullName);
+            filling(request, resume);
+            storage.update(resume);
+        } else {
+            resume = new Resume(fullName);
+            filling(request, resume);
+            storage.save(resume);
+        }
+        response.sendRedirect("resume");
+    }
+
+    private void filling(HttpServletRequest request, Resume resume) {
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-//            if (value != null && value.trim().length() != 0) {
-            if (Objects.nonNull(value) && !value.isEmpty()) {
+            if (Objects.nonNull(value) && value.trim().length() != 0) {
                 resume.setContact(type, value);
             } else {
                 resume.getContacts().remove(type);
             }
         }
-        storage.update(resume);
-        response.sendRedirect("resume");
-
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -59,7 +68,11 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "view":
             case "edit":
-                resume = storage.get(uuid);
+                if (Objects.nonNull(uuid) && uuid.trim().length() != 0) {
+                    resume = storage.get(uuid);
+                } else {
+                    resume = new Resume("0", "Новое резюме");
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
