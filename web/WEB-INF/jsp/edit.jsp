@@ -1,4 +1,8 @@
-<%@ page import="ru.javaops.basejava.model.*" %>
+<%@ page import="ru.javaops.basejava.model.ContactType" %>
+<%@ page import="ru.javaops.basejava.model.ListSection" %>
+<%@ page import="ru.javaops.basejava.model.OrganizationSection" %>
+<%@ page import="ru.javaops.basejava.model.TextSection" %>
+<%@ page import="ru.javaops.basejava.util.HtmlUtil" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -31,7 +35,8 @@
         <%--<input type="text" name="section" size=30 value="1"><br/>--%>
         <%--<input type="text" name="section" size=30 value="2"><br/>--%>
         <%--<input type="text" name="section" size=30 value="3"><br/>--%>
-        <c:forEach var="type" items="<%=SectionType.values()%>">
+        <%--<c:forEach var="type" items="<%=SectionType.values()%>">--%>
+        <c:forEach var="type" items="<%=resume.getSections().keySet()%>">
             <c:set var="abstractSection" value="${resume.getSection(type)}"/>
             <jsp:useBean id="abstractSection" type="ru.javaops.basejava.model.AbstractSection"/>
             <dl>
@@ -52,26 +57,26 @@
                         <c:forEach var="organization"
                                    items="<%=((OrganizationSection) abstractSection).getOrganizations()%>"
                                    varStatus="loop">
-                            <br><br>Наименование организации:
+                            Наименование организации:
                             <dd><input type="text" name="${type.name()}" size=122 value="${organization.homePage.name}">
                             </dd>
-                            <br><br>Адрес сайта:
+                            Адрес сайта:
                             <dd><input type="text" name="${type.name()}_http" size=122
                                        value="${organization.homePage.url}"></dd>
                             <c:forEach var="position" items="${organization.positions}">
                                 <jsp:useBean id="position" type="ru.javaops.basejava.model.Position"/>
-                                <br><br>Начальная дата ("MM/yyyy"):
+                                Начальная дата ("MM/yyyy"):
                                 <dd><input type="text" name="${type.name()}_${loop.count}_positionStartDate" size=122
                                            value="${position.dateStart.format(DateTimeFormatter.ofPattern("MM/yyyy"))}">
                                 </dd>
-                                <br><br>Конечная дата ("MM/yyyy"):
+                                Конечная дата ("MM/yyyy"):
                                 <dd><input type="text" name="${type.name()}_${loop.count}_positionEndDate" size=122
                                            value="${position.dateEnd.format(DateTimeFormatter.ofPattern("MM/yyyy"))}">
                                 </dd>
-                                <br><br>Должность\Специальность:
+                                Должность\Специальность:
                                 <dd><input type="text" name="${type.name()}_${loop.count}_positionName" size=122
-                                           value="${position.title}"></dd>
-                                <br><br>Описание обязанностей:
+                                           value="${HtmlUtil.replacingQuotes(position.title)}"></dd>
+                                Описание обязанностей:
                                 <dd><input type="text" name="${type.name()}_${loop.count}_positionDescription" size=122
                                            value="${position.description}"></dd>
                                 <hr>

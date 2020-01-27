@@ -17,20 +17,6 @@
             <th></th>
             <th></th>
         </tr>
-        <%--       <%
-                   for (Resume resume : (List<Resume>) request.getAttribute("resumes")) {
-               %>
-               <tr>
-                   <td>
-                       <a href="resume?uuid=<%=resume.getUuid()%>"><%=resume.getFullName()%>
-                       </a>
-                   </td>
-                   <td><%=resume.getContact(ContactType.MAIL)%>
-                   </td>
-               </tr>
-               <%
-                   }
-               %>--%>
         <c:forEach items="${resumes}" var="resume">
             <jsp:useBean id="resume" type="ru.javaops.basejava.model.Resume"/>
             <tr>

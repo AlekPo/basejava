@@ -11,7 +11,7 @@ public class DateUtil {
     }
 
     public static YearMonth parsing(String text) {
-        DateTimeFormatter f = DateTimeFormatter.ofPattern("M/uuuu");
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("MM/yyyy");
         return YearMonth.parse(text, f);
     }
 }

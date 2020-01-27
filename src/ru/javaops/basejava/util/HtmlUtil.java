@@ -51,7 +51,8 @@ public class HtmlUtil {
         for (Organization organization : items) {
             String name;
             StringJoiner strPosition = new StringJoiner("");
-            if (Objects.isNull(organization.getHomePage().getUrl())) {
+            if (Objects.isNull(organization.getHomePage().getUrl()) ||
+                    organization.getHomePage().getUrl().trim().isEmpty()) {
                 name = "<h3>" + organization.getHomePage().getName() + "</h3>\n";
             } else {
                 name = "" +
@@ -83,5 +84,9 @@ public class HtmlUtil {
             );
         }
         return html.toString();
+    }
+
+    public static String replacingQuotes(String str) {
+        return str.replaceAll("\"", "'");
     }
 }
