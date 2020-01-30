@@ -33,7 +33,8 @@ public class ResumeServlet extends HttpServlet {
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
         Resume resume;
-        /*if (!(uuid).isEmpty()) {
+
+        if (!(uuid).isEmpty()) {
             resume = storage.get(uuid);
             resume.setFullName(fullName);
             filling(request, resume);
@@ -42,17 +43,7 @@ public class ResumeServlet extends HttpServlet {
             resume = new Resume(fullName);
             filling(request, resume);
             storage.save(resume);
-        }*/
-        if (!(uuid).isEmpty()) {
-            storage.delete(uuid);
-            resume = new Resume(uuid, fullName);
-        } else {
-            resume = new Resume(fullName);
-
         }
-        filling(request, resume);
-        storage.save(resume);
-
         response.sendRedirect("resume");
     }
 
@@ -89,7 +80,8 @@ public class ResumeServlet extends HttpServlet {
                     List<Organization> organizations = new ArrayList<>();
                     String[] organizationValues = request.getParameterValues(section.name());
                     String[] organizationHttpValues = request.getParameterValues(section + "_http");
-                    if (Objects.isNull(organizationValues)) {
+                    if (Objects.isNull(value) || value.trim().length() == 0) {
+                        resume.getSections().remove(section);
                         break;
                     }
                     for (int i = 0; i < organizationValues.length; i++) {
@@ -117,7 +109,9 @@ public class ResumeServlet extends HttpServlet {
                             organizations.add(organization);
                         }
                     }
-                    resume.setSection(section, new OrganizationSection(organizations));
+                    if (!organizations.isEmpty()) {
+                        resume.setSection(section, new OrganizationSection(organizations));
+                    }
                     break;
                 default:
                     throw new StorageException("Calling an unknown section from SectionType");
@@ -140,35 +134,42 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             case "view":
+                resume = storage.get(uuid);
+                break;
             case "edit":
                 if (Objects.nonNull(uuid) && uuid.trim().length() != 0) {
                     resume = storage.get(uuid);
                 } else {
                     resume = new Resume("", "Новое резюме");
-
-                    ContactType[] contactTypes = ContactType.values();
-                    for (ContactType type : contactTypes) {
-                        resume.setContact(type, "");
-                    }
-                    SectionType[] sectionTypes = SectionType.values();
-                    for (SectionType type : sectionTypes) {
-                        switch (type) {
-                            case OBJECTIVE:
-                            case PERSONAL:
-                                resume.setSection(type, new TextSection(""));
-                                break;
-                            case ACHIEVEMENT:
-                            case QUALIFICATIONS:
-                                List<String> list = Arrays.asList("", "", "");
-                                resume.setSection(type, new ListSection(list));
-                                break;
-                            case EXPERIENCE:
-                            case EDUCATION:
-                                List<Organization> experience = new ArrayList<>();
-                                experience.add(new Organization("", "", new Position(YearMonth.now(), YearMonth.now(), "", "")));
-                                resume.setSection(type, new OrganizationSection(experience));
-                                break;
-                        }
+                }
+                SectionType[] sectionTypes = SectionType.values();
+                for (SectionType type : sectionTypes) {
+                    switch (type) {
+                        case OBJECTIVE:
+                        case PERSONAL:
+                            if (Objects.isNull(resume.getSection(type)) || ((TextSection) resume.getSection(type)).getContent().isEmpty()) {
+                                resume.setSection(type, TextSection.EMPTY);
+                            }
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            if (Objects.isNull(resume.getSection(type)) || ((ListSection) resume.getSection(type)).getItems().isEmpty()) {
+                                resume.setSection(type, ListSection.EMPTY);
+                            }
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            OrganizationSection organizationSection;
+                            if (Objects.isNull(resume.getSection(type)) || ((OrganizationSection) resume.getSection(type)).getOrganizations().isEmpty()) {
+                                List<Organization> emptyList = new ArrayList<>();
+                                emptyList.add(Organization.EMPTY);
+                                organizationSection = new OrganizationSection(emptyList);
+                            } else {
+                                organizationSection = (OrganizationSection) resume.getSection(type);
+                                organizationSection.getOrganizations().add(Organization.EMPTY);
+                            }
+                            resume.setSection(type, organizationSection);
+                            break;
                     }
                 }
                 break;

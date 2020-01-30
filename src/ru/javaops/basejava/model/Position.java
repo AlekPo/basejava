@@ -13,6 +13,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Position implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final Position EMPTY = new Position();
     @XmlJavaTypeAdapter(YearMonthAdapter.class)
     private YearMonth dateStart;
     @XmlJavaTypeAdapter(YearMonthAdapter.class)

@@ -1,10 +1,13 @@
 package ru.javaops.basejava.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class ListSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
+    public static final ListSection EMPTY = new ListSection(new ArrayList<>(Collections.emptyList()));
 
     private List<String> items;
 
