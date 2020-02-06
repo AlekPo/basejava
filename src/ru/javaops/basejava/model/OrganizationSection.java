@@ -1,5 +1,6 @@
 package ru.javaops.basejava.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,10 @@ public class OrganizationSection extends AbstractSection {
     }
 
     public OrganizationSection() {
+    }
+
+    public OrganizationSection(Organization... organizations) {
+        this(Arrays.asList(organizations));
     }
 
     public List<Organization> getOrganizations() {

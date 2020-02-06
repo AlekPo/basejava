@@ -28,12 +28,24 @@ dl {
 
 dt {
     display: inline-block;
-    width: 170px;
+    width: 210px;
+}
+
+dt.position {
+    display: inline-block;
+    margin-left: 40px;
+    width: 210px;
 }
 
 dd {
     display: inline-block;
     margin-left: 8px;
+    vertical-align: top;
+}
+
+dd.position {
+    display: inline-block;
+    margin-left: 40px;
     vertical-align: top;
 }
 
@@ -45,27 +57,81 @@ li {
     margin: 15px 0;
 }
 
-a[href^="skype:"] {
+dt[target="HEADING"] {
+    /*margin: 15px 0 5px;*/
+    font-size: 14pt;
+    font-weight: bold;
+    padding-right: 20px !important;
+    /*padding-left: 20px !important;*/
+    /*background: url(../img/person.png) no-repeat center left;*/
+}
+
+dt[target="PHONE"] {
+    padding-left: 20px !important;
+    background: url(../img/24x7phone.png) no-repeat center left;
+}
+
+dt[target="MOBILE"] {
+    padding-left: 20px !important;
+    background: url(../img/mobile.png) no-repeat center left;
+}
+
+dt[target="HOME_PHONE"] {
+    padding-left: 20px !important;
+    background: url(../img/home_phone.png) no-repeat center left;
+}
+
+dt[target="SKYPE"] {
     padding-left: 20px !important;
     background: url(../img/skype.png) no-repeat center left;
 }
 
-a[href^="mailto:"] {
+dt[target="MAIL"] {
     padding-left: 20px !important;
     background: url(../img/email.png) no-repeat center left;
 }
 
-a[href^="https://stackoverflow.com"] {
-    padding-left: 20px !important;
-    background: url(../img/so.png) no-repeat center left;
-}
-
-a[href^="https://www.linkedin.com"] {
+dt[target="LINKEDIN"] {
     padding-left: 20px !important;
     background: url(../img/lin.png) no-repeat center left;
 }
 
-a[href*="github."] {
+dt[target="GITHUB"] {
     padding-left: 20px !important;
     background: url(../img/gh.png) no-repeat center left;
 }
+
+dt[target="STACKOVERFLOW"] {
+    padding-left: 20px !important;
+    background: url(../img/so.png) no-repeat center left;
+}
+
+dt[target="HOME_PAGE"] {
+    padding-left: 20px !important;
+    background: url(../img/home.png) no-repeat center left;
+}
+
+/*a[href^="skype:"] {*/
+/*padding-left: 20px !important;*/
+/*background: url(../img/skype.png) no-repeat center left;*/
+/*}*/
+
+/*a[href^="mailto:"] {*/
+/*padding-left: 20px !important;*/
+/*background: url(../img/email.png) no-repeat center left;*/
+/*}*/
+
+/*a[href^="https://stackoverflow.com"] {*/
+/*padding-left: 20px !important;*/
+/*background: url(../img/so.png) no-repeat center left;*/
+/*}*/
+
+/*a[href^="https://www.linkedin.com"] {*/
+/*padding-left: 20px !important;*/
+/*background: url(../img/lin.png) no-repeat center left;*/
+/*}*/
+
+/*a[href*="github."] {*/
+/*padding-left: 20px !important;*/
+/*background: url(../img/gh.png) no-repeat center left;*/
+/*}*/

@@ -1,9 +1,6 @@
 package ru.javaops.basejava.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ListSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
@@ -17,6 +14,10 @@ public class ListSection extends AbstractSection {
     }
 
     public ListSection() {
+    }
+
+    public ListSection(String... items) {
+        this(Arrays.asList(items));
     }
 
     public List<String> getItems() {

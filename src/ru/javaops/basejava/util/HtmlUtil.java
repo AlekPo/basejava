@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 public class HtmlUtil {
+    public static boolean isEmpty(String str) {
+        return Objects.isNull(str) || str.trim().length() == 0;
+    }
 
     public static String textSectionTopToHtml(AbstractSection abstractSection) {
         String text = ((TextSection) abstractSection).getContent();

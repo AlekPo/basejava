@@ -19,66 +19,84 @@
     <form method="post" action="resume" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
-            <h3>
-                <dt>Имя:</dt>
-                <dd><input type="text" name="fullName" size=50 value="${resume.fullName}"></dd>
-            </h3>
+            <dt target="HEADING">Имя:</dt>
+            <dd><label>
+                <input type="text" name="fullName" size=55 value="${resume.fullName}">
+            </label></dd>
         </dl>
         <h3>Контакты:</h3>
         <c:forEach var="type" items="<%=ContactType.values()%>">
             <dl>
-                <dt>${type.title}</dt>
-                <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
+                <dt target=${type.name()}>${type.title}</dt>
+                <dd><label>
+                    <input type="text" name="${type.name()}" size=55 value="${resume.getContact(type)}">
+                </label></dd>
             </dl>
         </c:forEach>
         <hr>
-        <%--<input type="text" name="section" size=30 value="1"><br/>--%>
-        <%--<input type="text" name="section" size=30 value="2"><br/>--%>
-        <%--<input type="text" name="section" size=30 value="3"><br/>--%>
-        <%--<c:forEach var="type" items="<%=SectionType.values()%>">--%>
         <c:forEach var="type" items="<%=resume.getSections().keySet()%>">
             <c:set var="abstractSection" value="${resume.getSection(type)}"/>
             <jsp:useBean id="abstractSection" type="ru.javaops.basejava.model.AbstractSection"/>
             <dl>
-                <h3>
-                    <dt>${type.title}</dt>
-                </h3>
+                <dt target="HEADING">${type.title}</dt>
+                <br>
                 <c:choose>
                     <c:when test="${type.name().equals('OBJECTIVE') or type.name().equals('PERSONAL')}">
-                        <dd><input type="text" name="${type.name()}" size=97
-                                   value="<%=((TextSection) abstractSection).getContent()%>"></dd>
+                        <dd><label>
+                            <input type="text" name="${type.name()}" size=122
+                                   value="<%=((TextSection) abstractSection).getContent()%>">
+                        </label></dd>
                     </c:when>
                     <c:when test="${type.name().equals('ACHIEVEMENT') or type.name().equals('QUALIFICATIONS')}">
-                        <dd><textarea rows="10" cols="99"
-                                      name="${type.name()}"><%=String.join("\n", ((ListSection) abstractSection).getItems())%></textarea>
+                        <dd><label>
+<textarea rows="10" cols="124"
+          name="${type.name()}"><%=String.join("\n", ((ListSection) abstractSection).getItems())%></textarea>
+                        </label>
                         </dd>
                     </c:when>
                     <c:when test="${type.name().equals('EXPERIENCE') or type.name().equals('EDUCATION')}">
                         <c:forEach var="organization"
                                    items="<%=((OrganizationSection) abstractSection).getOrganizations()%>"
-                                   varStatus="loop">
+                                   varStatus="counter">
                             Наименование организации:
-                            <dd><input type="text" name="${type.name()}" size=122 value="${organization.homePage.name}">
+                            <dd><label>
+                                <input type="text" name="${type.name()}" size=122 value="${organization.homePage.name}">
+                            </label>
                             </dd>
                             Адрес сайта:
-                            <dd><input type="text" name="${type.name()}_http" size=122
-                                       value="${organization.homePage.url}"></dd>
+                            <dd><label>
+                                <input type="text" name="${type.name()}url" size=122
+                                       value="${organization.homePage.url}">
+                            </label></dd>
+                            <br>
                             <c:forEach var="position" items="${organization.positions}">
                                 <jsp:useBean id="position" type="ru.javaops.basejava.model.Position"/>
-                                Начальная дата ("MM/yyyy"):
-                                <dd><input type="text" name="${type.name()}_${loop.count}_positionStartDate" size=122
+                                <dt class="position">Начальная дата ("MM/yyyy"):</dt>
+                                <dd class="position"><label>
+                                    <input type="text" name="${type.name()}${counter.index}startDate"
+                                           size=118
                                            value="${position.dateStart.format(DateTimeFormatter.ofPattern("MM/yyyy"))}">
+                                </label>
                                 </dd>
-                                Конечная дата ("MM/yyyy"):
-                                <dd><input type="text" name="${type.name()}_${loop.count}_positionEndDate" size=122
+                                <dt class="position">Конечная дата ("MM/yyyy"):</dt>
+                                <dd class="position"><label>
+                                    <input type="text" name="${type.name()}${counter.index}endDate"
+                                           size=118
                                            value="${position.dateEnd.format(DateTimeFormatter.ofPattern("MM/yyyy"))}">
+                                </label>
                                 </dd>
-                                Должность\Специальность:
-                                <dd><input type="text" name="${type.name()}_${loop.count}_positionName" size=122
-                                           value="${HtmlUtil.replacingQuotes(position.title)}"></dd>
-                                Описание обязанностей:
-                                <dd><input type="text" name="${type.name()}_${loop.count}_positionDescription" size=122
-                                           value="${position.description}"></dd>
+                                <dt class="position">Должность\Специальность:</dt>
+                                <dd class="position"><label>
+                                    <input type="text" name="${type.name()}${counter.index}title"
+                                           size=118
+                                           value="${HtmlUtil.replacingQuotes(position.title)}">
+                                </label></dd>
+                                <dt class="position">Описание обязанностей:</dt>
+                                <dd class="position"><label>
+                                    <input type="text" name="${type.name()}${counter.index}description"
+                                           size=118
+                                           value="${position.description}">
+                                </label></dd>
                                 <hr>
                             </c:forEach>
                         </c:forEach>
@@ -91,7 +109,7 @@
         </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
-        <button onclick="window.history.back()">Отменить</button>
+        <button type="reset" onclick="window.history.back()">Отменить</button>
     </form>
 </section>
 <jsp:include page="fragments/footer.jsp"/>

@@ -10,14 +10,17 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
-    <h1>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit">Edit</a></h1>
-    <p>
+    <h1>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"
+                                                                                      alt="pencil.png"></a></h1>
+    <dl>
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry"
                          type="java.util.Map.Entry<ru.javaops.basejava.model.ContactType, java.lang.String>"/>
-                <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
+            <dt target=<%=contactEntry.getKey()%>><%=contactEntry.getKey().toHtml(contactEntry.getValue())%>
+            </dt>
+            <br/>
         </c:forEach>
-    <p>
+    </dl>
     <hr>
     <table cellpadding="2">
         <c:forEach var="sectionEntry" items="${resume.sections}">
